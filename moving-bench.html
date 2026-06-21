@@ -1,0 +1,1008 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>KEIF: Moving Bench — benjamin lemar</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* =========================================================
+   TOKENS — single source of truth for layout
+   ========================================================= */
+:root {
+  --bg: #f6f6f6;
+  --text: rgb(43, 23, 3);
+  --pill-bg: #eeeeee;
+  --pill-bg-hover: #e4e4e4;
+  --accent: #b7ff00;
+  --conf: rgba(43, 23, 3, 0.25);
+
+  /* Layout: shared by nav AND content */
+  --content-max: 1332px;
+  --gutter: 30px;        /* horizontal padding, both nav and content */
+  --gap: 8px;            /* gap between content pills */
+  --nav-gap: 11px;       /* gap between nav pills */
+
+  /* Pill metrics */
+  --pill-h: 25px;
+  --radius: 45px;        /* corner radius for all pills + nav pills */
+  --pill-pad-y: 0px;
+  --pill-pad-x: 5px;
+  --fs: clamp(12px, 2vw, 12.6px);
+  --ls: -0.005em;
+
+  /* Easing curves from gentle.systems */
+  --ease-1: cubic-bezier(0.33, 0, 0, 1);
+  --ease-2: cubic-bezier(0.33, 0, 0.66, 1);
+  --ease-3: cubic-bezier(0.25, 0, 0, 0.75);
+
+  /* Pill widths — percentages of inner container.
+     Inner container = (--content-max minus padding when narrower).
+     Using % means both nav and content grow proportionally. */
+
+  /* Nav widths (sum to 1332px @ 1332 container w/ 5×11px gaps).
+     1332 − 55 = 1277 of pills. % = pill_px / 1332 */
+  --nav-home:        31.98%;   /* 426 */
+  --nav-experiments: 20.35%;   /* 271 */
+  --nav-work:         8.93%;   /* 119 */
+  --nav-archived:    11.79%;   /* 157 */
+  --nav-fss:         11.71%;   /* 156 */
+  --nav-about:       11.11%;   /* 148 */
+
+  /* Content pill widths */
+  --w-cta:        22.90%;      /* 305 */
+  --w-date:       11.26%;      /* 150 */
+  --w-title-work: 76.50%;      /* 1019 */
+  --w-title-exp:  64.64%;      /* 861 */
+
+  --ph-border: rgba(43, 23, 3, 0.25);
+  --ph-bg: rgba(43, 23, 3, 0.03);
+  --ph-label: rgba(43, 23, 3, 0.55);
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Instrument Sans', system-ui, sans-serif;
+  font-size: var(--fs);
+  line-height: 1.2;
+  letter-spacing: var(--ls);
+  font-weight: 400;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  font-feature-settings: "kern";
+  font-kerning: normal;
+}
+
+::selection {
+  background-color: var(--accent);
+  color: var(--text);
+}
+
+a { color: inherit; text-decoration: none; }
+img, video { display: block; max-width: 100%; height: auto; }
+
+/* =========================================================
+   THE SHARED CONTAINER
+   - Nav and main both use this exact width + gutter
+   - centered, capped at --content-max, padding-inline = --gutter
+   ========================================================= */
+.container {
+  width: 100%;
+  max-width: calc(var(--content-max) + var(--gutter) * 2);
+  margin: 0 auto;
+  padding: 0 var(--gutter);
+}
+
+/* =========================================================
+   PILL BASE — 30h, 14px font, 8px/12px padding
+   ========================================================= */
+.pill {
+  border-radius: var(--radius);
+  display: inline-flex;
+  align-items: center;
+  height: var(--pill-h);
+  padding: var(--pill-pad-y) var(--pill-pad-x);
+  background: var(--pill-bg);
+  color: var(--text);
+  white-space: nowrap;
+  font-size: var(--fs);
+  line-height: 1;
+  letter-spacing: var(--ls);
+  transition: background 120ms var(--ease-1);
+  flex: 0 0 auto;
+}
+.pill.no-hover { cursor: default; }
+.pill:not(.no-hover):hover { background: var(--pill-bg-hover); }
+
+.pill.cta {
+  background: #ffffff;
+  cursor: pointer;
+  position: relative;
+  width: var(--w-cta);
+  flex: 0 0 var(--w-cta);
+  justify-content: space-between;
+  border: 1px solid rgba(43,23,3,0.06);
+}
+.pill.cta .arrow,
+.pill.cta .circle {
+  display: inline-block;
+  transition: opacity 180ms var(--ease-1), transform 220ms var(--ease-1);
+}
+.pill.cta .circle {
+  position: absolute;
+  right: var(--pill-pad-x);
+  opacity: 0;
+  transform: scale(0.6);
+  pointer-events: none;
+}
+.pill.cta:hover { background: var(--accent); border-color: transparent; }
+.pill.cta:hover .arrow { opacity: 0; transform: translateX(3px) scale(0.6); }
+.pill.cta:hover .circle { opacity: 1; transform: scale(1); }
+
+.pill.conf {
+  color: var(--conf);
+  text-decoration: line-through;
+  background: var(--pill-bg);
+}
+
+.pill.title-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex: 0 0 auto;
+  overflow: hidden;
+}
+.pill.title-bar .t-name { overflow: hidden; text-overflow: ellipsis; }
+.pill.title-bar .t-year { padding-left: 8px; flex: 0 0 auto; }
+
+/* =========================================================
+   HEADER / NAV
+   - Fixed at top, inner uses .container so it aligns with content
+   ========================================================= */
+.header_wrapper {
+  position: fixed;
+  top: 12px;
+  left: 0; right: 0;
+  z-index: 100;
+  background: var(--bg);
+  transition: transform 250ms var(--ease-1);
+}
+.header_wrapper.is-hidden { transform: translateY(-200%); }
+
+.nav-row {
+  display: flex;
+  gap: var(--nav-gap);
+  width: 100%;
+}
+
+.nav-pill {
+  border-radius: var(--radius);
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-start;
+  height: var(--pill-h);
+  padding: var(--pill-pad-y) var(--pill-pad-x);
+  background: var(--pill-bg);
+  color: var(--text);
+  font-size: var(--fs);
+  line-height: 1;
+  letter-spacing: var(--ls);
+  cursor: pointer;
+  white-space: nowrap;
+  user-select: none;
+  transition: background 120ms var(--ease-1);
+  width: auto;
+  flex: 0 0 auto;
+}
+.nav-pill:hover { background: var(--accent); }
+.nav-pill.is-active { background: var(--accent); }
+
+/* Only the home pill may truncate */
+.nav-pill.home {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.nav-pill.home            { width: var(--nav-home); }
+.nav-pill.nav-experiments { width: var(--nav-experiments); }
+.nav-pill.nav-work        { width: var(--nav-work); }
+.nav-pill.nav-archived    { width: var(--nav-archived); }
+.nav-pill.nav-fss         { width: var(--nav-fss); }
+.nav-pill.nav-about       { width: var(--nav-about); }
+.nav-pill.nav-menu-toggle { display: none; }
+
+/* Home pill name swap: full on desktop, short on mobile */
+.nav-pill.home .name-full  { display: inline; }
+.nav-pill.home .name-short { display: none; }
+
+/* =========================================================
+   MAIN
+   ========================================================= */
+.main-content {
+  padding-top: 137px; /* 12 nav-top + 25 nav-h + 100 hero gap */
+}
+
+.hero {
+  height: 400px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+}
+.hero-title {
+  font-size: 28px;
+  line-height: 1.15;
+  letter-spacing: -0.5px;
+  font-weight: 400;
+}
+.hero-sub { margin-top: 4px; color: rgba(43, 23, 3, 0.55); }
+
+/* =========================================================
+   FEED
+   ========================================================= */
+.feed_container {
+  display: flex;
+  flex-direction: column;
+  gap: 60px;
+  padding-bottom: 200px;
+}
+.feed-entry {
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap);
+  opacity: 0;
+  transform: translateY(8px);
+  animation: entryIn 600ms ease forwards;
+}
+@keyframes entryIn { to { opacity: 1; transform: translateY(0); } }
+
+/* =========================================================
+   TAG ROWS — proportional widths summing to 100%
+   Type 1 work:        title 76.50% + gap + cta 22.90% = 99.40% (+0.60% gap)
+   Type 2 exp/fss:     date 11.26% + gap + title 64.64% + gap + cta 22.90% = 98.80% (+1.20% gaps)
+   Type 3 highlight:   date 11.26% + gap + title (auto)
+   ========================================================= */
+.tag-row {
+  display: flex;
+  gap: var(--gap);
+  align-items: center;
+  width: 100%;
+}
+.tag-row.work .pill.title-bar {
+  width: var(--w-title-work);
+  flex: 1 1 var(--w-title-work);
+}
+.tag-row.exp .pill.date {
+  width: var(--w-date);
+  flex: 0 0 var(--w-date);
+  justify-content: flex-start;
+}
+.tag-row.exp .pill.title-bar {
+  width: auto;
+  flex: 0 0 auto;
+}
+
+/* Tag row with a text card alongside (Tsuneishi pattern):
+   pills stay 25px at the top. The card markup lives AFTER .exp-content
+   in the DOM (so mobile flow shows image then card naturally), but on
+   desktop it's absolutely positioned within .feed-entry to appear
+   alongside the title pill, top-aligned. */
+.feed-entry:has(.tag-row-with-card) {
+  position: relative;
+}
+.tag-row.tag-row-with-card {
+  align-items: flex-start;
+}
+.tag-row.tag-row-with-card .pill {
+  flex-shrink: 0;
+}
+.feed-entry .text-card.tag-card {
+  position: absolute;
+  /* Position right after the title pill, within feed-entry's coord space */
+  left: calc(var(--w-date) + var(--gap) + var(--img-w) + var(--gap));
+  top: 0;
+  width: var(--w-cta);
+  /* Grows taller naturally as text wraps; doesn't affect layout flow */
+}
+.tag-row.tag-row-with-card .pill.title-bar {
+  margin-right: 0;
+}
+.tag-row.highlight .pill.date {
+  width: var(--w-date);
+  flex: 0 0 var(--w-date);
+  justify-content: flex-start;
+}
+.tag-row.highlight .pill.title-bar { flex: 1 1 auto; }
+
+/* Confidential rows */
+/* White text card (like a chat bubble) — used next to an image
+   on entries like Tsuneishi where prose accompanies a small visual */
+.text-card {
+  background: #ffffff;
+  padding: 12px 14px;
+  font-size: var(--fs);
+  line-height: 1.4;
+  color: var(--text);
+  align-self: flex-start;
+  display: block;
+}
+
+/* Exp-pattern entries: image (and optional card) sit beneath the
+   TITLE pill, indented past the date pill so they visually align
+   with where the title starts.
+
+   The title pill width is locked to the image width via --img-w
+   (set per-entry inline). Image and title right-edges align. */
+.feed-entry .exp-content {
+  display: flex;
+  gap: var(--gap);
+  align-items: flex-start;
+  margin-left: calc(var(--w-date) + var(--gap));
+  margin-top: var(--gap);
+}
+.feed-entry .exp-content > .ec-image {
+  flex: 0 0 auto;
+  /* Default image width if no --img-w is set */
+  width: var(--img-w, 660px);
+}
+/* fss-three: 3 small squares, each sized to fit its inner ph-frame */
+.feed-entry .exp-content.fss-three > .ec-image {
+  width: auto;
+}
+.feed-entry .exp-content > .ec-card {
+  flex: 1 1 auto;
+  align-self: flex-start;
+  min-width: 0;
+}
+
+/* When an entry sets --img-w, the title pill matches that width too */
+.feed-entry[style*="--img-w"] .tag-row.exp .pill.title-bar {
+  width: var(--img-w);
+  flex: 0 0 var(--img-w);
+}
+
+/* Tighter title pill for exp pattern when there's no CTA — title hugs
+   its content rather than spanning a fixed 64.64% width.
+   (Base .tag-row.exp .pill.title-bar already does width:auto;
+   this kept for tag-row.exp.tight legacy usage.) */
+.feed-entry .tag-row.exp.tight .pill.title-bar {
+  width: auto;
+  flex: 0 0 auto;
+}
+
+/* Entries with no link: hide the CTA pill globally; title bar should
+   fill row width so the layout doesn't end with empty space */
+.feed-entry.no-link .pill.cta { display: none; }
+.feed-entry.no-link .tag-row.work .pill.title-bar { width: 100%; flex: 1 1 100%; }
+/* Note: for .no-link exp entries, the per-entry --img-w rule above
+   handles title sizing — we don't override it here. */
+
+/* Load-more pagination: hide entries marked with data-extra by default */
+.feed-entry[data-extra],
+.conf-group[data-extra] { display: none; }
+/* Class added to body when each batch is revealed */
+body.show-extra-1 .feed-entry[data-extra="1"],
+body.show-extra-1 .conf-group[data-extra="1"] { display: flex; }
+body.show-extra-2 .feed-entry[data-extra="2"],
+body.show-extra-2 .conf-group[data-extra="2"] { display: flex; }
+body.show-extra-3 .feed-entry[data-extra="3"],
+body.show-extra-3 .conf-group[data-extra="3"] { display: flex; }
+body.show-extra-4 .feed-entry[data-extra="4"],
+body.show-extra-4 .conf-group[data-extra="4"] { display: flex; }
+
+.conf-group { display: flex; flex-direction: column; gap: var(--gap); }
+.conf-row { display: flex; gap: var(--gap); }
+.conf-row .pill:first-child { flex: 1 1 auto; }
+.conf-row .pill.conf-right {
+  width: var(--w-cta);
+  flex: 0 0 var(--w-cta);
+  justify-content: center;
+}
+
+/* =========================================================
+   PROJECT IMAGE GRID
+   ========================================================= */
+.project-row {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: var(--gap);
+  align-items: start;
+}
+/* Variant: image left + fixed-percentage text column right */
+.project-row.with-text {
+  display: flex;
+  gap: var(--gap);
+  justify-content: space-between;
+  align-items: flex-start;
+}
+.project-row.with-text > .image-col {
+  flex: 1 1 auto;
+  min-width: 0;
+  /* Default standalone image: 6 of 12 cols.
+     Width fraction of inner container:
+     6 col-units of 12 (with 11 gaps in 12-col grid):
+     ((100% - 11*(8/1332*100)%) / 12) * 6 + 5 * (8/1332*100)%
+     ≈ 49.3% on a 1332 container. We use a max-width that scales
+     fluidly using % of the container. */
+  max-width: 49.3%;
+}
+.project-row.with-text > .image-col.full { max-width: none; }
+.project-row.with-text > .body-text-col {
+  flex: 0 0 var(--w-cta);
+  width: var(--w-cta);
+}
+
+.col1{grid-column:span 1}.col2{grid-column:span 2}.col3{grid-column:span 3}
+.col4{grid-column:span 4}.col5{grid-column:span 5}.col6{grid-column:span 6}
+.col7{grid-column:span 7}.col8{grid-column:span 8}.col9{grid-column:span 9}
+.col10{grid-column:span 10}.col11{grid-column:span 11}.col12{grid-column:span 12}
+
+.proj-col { display: flex; flex-direction: column; gap: var(--gap); }
+.highlight-wrap { display: flex; flex-direction: column; gap: var(--gap); }
+
+/* =========================================================
+   IMAGE PLACEHOLDER FRAMES
+   ========================================================= */
+.ph-frame {
+  width: 100%;
+  position: relative;
+  background: var(--ph-bg);
+  border: 1px solid var(--ph-border);
+  overflow: hidden;
+  display: flex;
+  align-items: flex-end;
+  justify-content: flex-start;
+}
+.ph-frame::before, .ph-frame::after {
+  content: ""; position: absolute; inset: 0; pointer-events: none;
+}
+.ph-frame::before {
+  background: linear-gradient(to top right,
+    transparent calc(50% - 0.5px),
+    var(--ph-border) calc(50% - 0.5px),
+    var(--ph-border) calc(50% + 0.5px),
+    transparent calc(50% + 0.5px));
+}
+.ph-frame::after {
+  background: linear-gradient(to top left,
+    transparent calc(50% - 0.5px),
+    var(--ph-border) calc(50% - 0.5px),
+    var(--ph-border) calc(50% + 0.5px),
+    transparent calc(50% + 0.5px));
+}
+.ph-frame .ph-label {
+  position: relative; z-index: 2;
+  margin: 10px; padding: 4px 8px;
+  background: var(--bg); color: var(--ph-label);
+  font-size: 10px; letter-spacing: 0.04em;
+  border: 1px solid var(--ph-border);
+  font-feature-settings: "tnum";
+}
+.ph-frame .ph-label .ph-ratio { margin-left: 6px; opacity: 0.6; }
+
+.ratio-land { aspect-ratio: 16 / 10; }
+.ratio-port { aspect-ratio: 3 / 4; }
+.ratio-sq   { aspect-ratio: 1 / 1; }
+.ratio-vid  { aspect-ratio: 16 / 9; }
+
+/* Body text: matches CTA pill width with 1px inner padding */
+.body-text {
+  font-size: var(--fs);
+  line-height: 1.4;
+  width: 100%;
+  padding: 0 1px;
+}
+.body-text-col {
+  width: var(--w-cta);
+  flex: 0 0 var(--w-cta);
+  margin-left: auto;
+}
+.entry-caption {
+  font-size: var(--fs);
+  line-height: 1.4;
+  color: rgba(43, 23, 3, 0.7);
+  max-width: 520px;
+  margin-top: 4px;
+}
+
+/* Load more & footer */
+.load-more { display: flex; justify-content: center; padding: 60px 0; }
+.load-more .pill { gap: 8px; cursor: pointer; padding: 0 12px; }
+
+.footer-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--gap);
+  border-top: 1px solid rgba(43,23,3,0.08);
+  padding: var(--gutter) 0;
+  margin-top: 80px;
+}
+
+/* =========================================================
+   MOBILE (≤ 720px)
+   ========================================================= */
+@media (max-width: 720px) {
+  :root { --gutter: 12px; --gap: 6px; --nav-gap: 8px; }
+
+  .hero { height: auto; min-height: 220px; }
+  .hero-title { font-size: 20px; }
+
+  /* Top nav row stays single line: home + work + about only.
+     Layout uses justify-content: space-between so home naturally
+     pushes against work/about. Home shrinks if needed. */
+  .nav-row {
+    flex-wrap: nowrap;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 8px;
+    overflow: visible;
+  }
+  .nav-pill {
+    flex: 0 0 auto;
+    width: auto;
+  }
+  /* Override desktop percentage widths on mobile — every named pill
+     must size to its content so text doesn't clip. */
+  .nav-pill.home,
+  .nav-pill.nav-experiments,
+  .nav-pill.nav-work,
+  .nav-pill.nav-archived,
+  .nav-pill.nav-fss,
+  .nav-pill.nav-about {
+    width: auto;
+  }
+  /* Home pill: flex-grows to fill space up to work pill, but can
+     shrink if needed. min-width:0 so it never blocks shrinking. */
+  .nav-pill.home {
+    flex: 1 1 0;
+    min-width: 0;
+    order: 1;
+  }
+  .nav-pill.home .name-full  { display: none; }
+  .nav-pill.home .name-short { display: inline; }
+
+  .nav-pill.nav-work  { order: 2; flex: 0 0 auto; }
+  .nav-pill.nav-about { order: 3; flex: 0 0 auto; }
+
+  /* Hidden items: absolute-positioned overlay below nav row */
+  .nav-pill.nav-experiments,
+  .nav-pill.nav-archived,
+  .nav-pill.nav-fss {
+    position: absolute;
+    right: var(--gutter);
+    width: auto;
+    flex: 0 0 auto;
+    opacity: 0;
+    pointer-events: none;
+    transform: translateY(-6px);
+    transition: opacity 200ms var(--ease-1), transform 200ms var(--ease-1);
+  }
+  /* 30px pill + 8px gap between stacked items = 38px stride */
+  .header_wrapper.menu-open .nav-pill.nav-experiments { opacity: 1; pointer-events: auto; transform: translateY(0); top: calc(100% + 8px); }
+  .header_wrapper.menu-open .nav-pill.nav-archived    { opacity: 1; pointer-events: auto; transform: translateY(0); top: calc(100% + 8px + 38px); }
+  .header_wrapper.menu-open .nav-pill.nav-fss         { opacity: 1; pointer-events: auto; transform: translateY(0); top: calc(100% + 8px + 76px); }
+  .nav-pill.nav-experiments { transition-delay: 0ms; }
+  .nav-pill.nav-archived    { transition-delay: 60ms; }
+  .nav-pill.nav-fss         { transition-delay: 120ms; }
+
+  .nav-pill.nav-menu-toggle {
+    display:inline-flex; align-items:center; justify-content:center;
+    order:4; flex:0 0 auto; width:var(--pill-h); height:var(--pill-h);
+    padding:0; border-radius:50%; font-size:16px; line-height:1;
+  }
+
+  /* =====================================================
+     CONTENT PILLS ON MOBILE
+     ===================================================== */
+
+  /* Default: stack tag-row pills full-width (used as base) */
+  .tag-row { flex-wrap: wrap; }
+  .tag-row .pill.title-bar { width: 100%; flex: 0 0 100%; }
+  .tag-row.highlight .pill.date { width: 100%; flex: 0 0 100%; }
+  .pill.cta { width: 100%; flex: 0 0 100%; }
+
+  /* WORK entries: hide CTA, title-bar is the link, append → arrow */
+  .tag-row.work .pill.cta { display: none; }
+  .tag-row.work .pill.title-bar {
+    cursor: pointer;
+  }
+  .tag-row.work .pill.title-bar:hover { background: var(--pill-bg-hover); }
+  .tag-row.work .pill.title-bar::after {
+    content: "→";
+    margin-left: 8px;
+    flex: 0 0 auto;
+  }
+
+  /* EXPERIMENTS / FUTURESUPERSONIC: date + title side by side, hide CTA */
+  .tag-row.exp { flex-wrap: nowrap; }
+  .tag-row.exp .pill.cta { display: none; }
+  .tag-row.exp .pill.date {
+    width: auto;
+    flex: 0 0 auto;
+  }
+  .tag-row.exp .pill.title-bar {
+    width: auto;
+    flex: 1 1 auto;
+    min-width: 0;
+    cursor: pointer;
+  }
+  .tag-row.exp .pill.title-bar:hover { background: var(--pill-bg-hover); }
+  .tag-row.exp .pill.title-bar::after {
+    content: "→";
+    margin-left: 8px;
+    flex: 0 0 auto;
+  }
+
+  /* CONFIDENTIAL: collapse into a single inline pill, no right-side pill.
+     Inside the single pill, the original text stays left-aligned and the
+     mirrored suffix ("confidential" or year) is pushed to the right edge. */
+  .conf-row {
+    flex-wrap: nowrap;
+    gap: 0;
+  }
+  .conf-row .pill:first-child {
+    width: 100%;
+    flex: 1 1 100%;
+    min-width: 0;
+    justify-content: space-between;
+    overflow: hidden;
+  }
+  /* Append the suffix as a right-aligned segment within the same pill */
+  .conf-row .pill:first-child::after {
+    content: attr(data-suffix);
+    margin-left: 12px;
+    flex: 0 0 auto;
+    white-space: nowrap;
+  }
+  /* Hide the separate right-side confidential pill on mobile */
+  .conf-row .pill.conf-right { display: none; }
+
+  /* =====================================================
+     IMAGES ON MOBILE
+     ===================================================== */
+
+  /* Default single-image entries: full width */
+  .project-row { grid-template-columns: 1fr; }
+  .col1,.col2,.col3,.col4,.col5,.col6,
+  .col7,.col8,.col9,.col10,.col11,.col12 { grid-column: span 1; }
+
+  /* MOBILE 2-UP RULE for any multi-image entry (2, 3, or 4 images):
+     two images per row at half-width each, wrapping to next row.
+     Heights vary naturally based on each image's aspect ratio. */
+
+  /* Project-row variant (existing 12-col grid layouts) */
+  .project-row:has(> .proj-col + .proj-col) {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: var(--gap);
+    grid-template-columns: none;
+    justify-items: stretch;
+  }
+  .project-row:has(> .proj-col + .proj-col) > .proj-col {
+    flex: 0 0 calc(50% - var(--gap) / 2);
+    width: calc(50% - var(--gap) / 2);
+    max-width: calc(50% - var(--gap) / 2);
+    grid-column: auto;
+  }
+
+  /* Image + text-card pattern: card stacks BELOW image at full width
+     (overrides the 2-up multi-image rule above) */
+  .project-row:has(> .proj-col .text-card) {
+    flex-direction: column;
+    flex-wrap: nowrap;
+  }
+  .project-row:has(> .proj-col .text-card) > .proj-col {
+    flex: 0 0 100%;
+    width: 100%;
+    max-width: 100%;
+  }
+
+  /* Mobile: exp-content KEEPS an indent so image aligns with title pill
+     position (past the date pill). Date pill on mobile is content-sized
+     (~85-95px for typical YYYY.MM.DD dates); use 95px + gap to align. */
+  .feed-entry .exp-content {
+    flex-direction: column;
+    align-items: stretch;
+    margin-left: calc(95px + var(--gap));
+  }
+  .feed-entry .exp-content > .ec-image,
+  .feed-entry .exp-content > .ec-card {
+    max-width: none;
+    width: 100%;
+    flex: 0 0 auto;
+  }
+  /* Force the inner ph-frame to fill the .ec-image container on mobile,
+     overriding any inline width:280px etc. from desktop layouts */
+  .feed-entry .exp-content > .ec-image .ph-frame {
+    width: 100% !important;
+  }
+
+  /* Mobile: title pill in exp-pattern must not use desktop --img-w
+     (which would overflow). Reset to flex-grow so it fills the row
+     after the date pill. */
+  .feed-entry[style*="--img-w"] .tag-row.exp .pill.title-bar {
+    width: auto;
+    flex: 1 1 auto;
+    min-width: 0;
+  }
+
+  /* Mobile: futuresupersonic 3 squares — 2-up rule applies.
+     Override exp-content's column direction so it wraps in rows. */
+  .feed-entry .exp-content.fss-three {
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: var(--gap);
+  }
+  .feed-entry .exp-content.fss-three > .ec-image {
+    flex: 0 0 calc(50% - var(--gap) / 2);
+    width: calc(50% - var(--gap) / 2);
+    max-width: calc(50% - var(--gap) / 2);
+    min-width: 0;
+  }
+
+  /* Mobile: Tsuneishi text-card flows naturally below image, full width */
+  .feed-entry .text-card.tag-card {
+    position: static;
+    width: 100%;
+    margin-top: var(--gap);
+  }
+
+  /* with-text variant unchanged */
+  .project-row.with-text { flex-direction: column; }
+  .project-row.with-text > .image-col,
+  .project-row.with-text > .body-text-col { width: 100%; max-width: none; flex: 0 0 auto; }
+}
+
+/* ===================== CASE STUDY ===================== */
+:root { --cs-text: 42%; --cs-muted: rgba(43,23,3,0.58); }
+.main-content.cs { padding-top: 80px; }
+
+.cs-title { font-size: 32px; font-weight:400; letter-spacing:-0.5px; line-height:1.08; }
+.cs-meta { margin: 200px 0 150px 0; max-width: 380px; }
+.cs-meta-k { font-size:14px; font-weight:500; margin-bottom:7px; }
+.cs-meta-v { font-size:14px; line-height:1.5; color: var(--cs-muted); }
+
+/* two-column editorial row: heading column (left) + text column (right) */
+.cs-row { display:grid; grid-template-columns: 1fr var(--cs-text); column-gap: 40px;
+          align-items:start; margin: 0 0 150px 0; }
+.cs-h { font-size:22px; font-weight:400; line-height:1.22; letter-spacing:-0.015em; }
+.cs-b p { font-size:clamp(18px, 2.1vw, 24px); line-height:1.56; margin-bottom: 18px; }
+.cs-b p:last-child { margin-bottom:0; }
+.cs-b.cs-lead p { font-size:clamp(18px, 2.1vw, 24px); }
+
+.cs-figure { margin: 0 0 130px 0; width:100%; }
+.cs-figure img { width:100%; display:block; height:auto; }
+.cs-figure video { width:100%; display:block; height:auto; }
+.cs-figure.cs-sm { max-width:70%; margin-left:auto; margin-right:auto; }
+
+.cs-quote { text-align:center; font-size: clamp(22px,3.1vw,33px); font-weight:400;
+            color: rgba(43,23,3,0.5); line-height:1.26; letter-spacing:-0.3px;
+            margin: 8px auto 130px; max-width: 720px; }
+
+/* technical architecture: text column only */
+.cs-tech-lead { font-size:22px; line-height:1.3; letter-spacing:-0.015em; margin-bottom: 56px; }
+.cs-tech-lead b { font-weight:500; }
+.cs-tech-restate { font-size:14px; line-height:1.55; color: var(--cs-muted); margin-bottom: 26px; }
+.cs-cards { display:flex; flex-direction:column; gap: 10px; }
+.cs-card { background:#fbfbfa; padding: 22px 26px 26px; }
+.cs-card .num { display:block; font-size:20px; color: rgba(43,23,3,0.4);
+                font-feature-settings:'tnum'; margin-bottom: 34px; }
+.cs-card h3 { font-size:13px; font-weight:600; margin-bottom:8px; }
+.cs-card p { font-size:12.5px; line-height:1.6; color: rgba(43,23,3,0.72); }
+.cs-card ul { list-style:none; margin: 14px 0 0; padding:0; }
+.cs-card li { font-size:12.5px; line-height:1.6; color: rgba(43,23,3,0.72);
+              padding-left:14px; position:relative; margin-bottom:9px; }
+.cs-card li:last-child { margin-bottom:0; }
+.cs-card li::before { content:'•'; position:absolute; left:0; color: rgba(43,23,3,0.4); }
+
+/* four-up concepts (full width) */
+.cs-concepts { display:grid; grid-template-columns: repeat(4,1fr); gap: var(--gap); margin: 0 0 90px 0; }
+.cs-concept .ph { aspect-ratio: 1/1; overflow:hidden; background:#ececec; }
+.cs-concept .ph img { width:100%; height:100%; object-fit:cover; display:block; }
+.cs-concept h3 { font-size:12px; font-weight:600; margin: 13px 0 6px; }
+.cs-concept p { font-size:11.5px; line-height:1.55; color: var(--cs-muted); }
+
+.cs-backbottom { text-align:center; margin: 40px 0 0; }
+.cs-backbottom a { font-size:12px; color: var(--cs-muted); }
+.cs-backbottom a:hover { color: var(--text); }
+
+@media (max-width:720px) {
+  .main-content.cs { padding-top: 66px; }
+  .cs-meta { margin: 70px 0 56px; }
+  .cs-row { grid-template-columns: 1fr; row-gap: 14px; margin-bottom: 84px; }
+  .cs-h { font-size:20px; }
+  .cs-figure { margin-bottom: 80px; }
+  .cs-figure.cs-sm { max-width:100%; }
+  .cs-tech-lead { font-size:20px; margin-bottom:36px; }
+  .cs-quote { margin: 6px auto 56px; }
+  .cs-concepts { grid-template-columns: repeat(2,1fr); gap: 26px var(--gap); }
+}
+
+/* ===== three-pill nav (canonical, matches index.html / practice.html) ===== */
+:root{ --nav-home:49.55%; --nav-practice:24.40%; --nav-fss:24.40%; }
+.nav-pill.home{ width:var(--nav-home); }
+.nav-pill.nav-practice{ width:var(--nav-practice); }
+.nav-pill.nav-fss{ width:var(--nav-fss); }
+@media (max-width:720px){
+  .nav-pill.home,.nav-pill.nav-practice,.nav-pill.nav-fss{
+    position:static; opacity:1; pointer-events:auto; transform:none; width:auto; transition-delay:0ms; top:auto;
+  }
+  .nav-pill.home{ flex:1 1 0; min-width:0; order:1; }
+  .nav-pill.home .name-full{ display:none; } .nav-pill.home .name-short{ display:inline; }
+  .nav-pill.nav-practice{ order:2; flex:0 0 auto; }
+  .nav-pill.nav-fss{ order:3; flex:0 0 auto; }
+}
+
+/* ===== scrolling case-study float nav ===== */
+#cs-nav-sentinel{ position:absolute; top:100px; left:0; width:1px; height:1px; pointer-events:none; }
+.cs-fab{
+  position:fixed; right:30px; top:50%;
+  transform:translateY(-50%) translateX(20px);
+  display:flex; flex-direction:column; align-items:flex-end; gap:10px;
+  z-index:120; opacity:0; pointer-events:none;
+  transition:opacity 250ms var(--ease-1, cubic-bezier(.33,0,0,1)), transform 250ms var(--ease-1, cubic-bezier(.33,0,0,1));
+}
+.cs-fab.is-visible{ opacity:1; pointer-events:auto; transform:translateY(-50%) translateX(0); }
+.cs-fab-btn{
+  width:44px; height:44px; border-radius:50%; border:none; cursor:pointer; padding:0;
+  display:inline-flex; align-items:center; justify-content:center;
+  font-size:18px; line-height:1; font-family:inherit; letter-spacing:0;
+  background:var(--pill-bg); color:var(--text, rgb(43,23,3));
+  transition:background 150ms var(--ease-1, cubic-bezier(.33,0,0,1)), color 150ms ease, transform 150ms ease;
+  -webkit-tap-highlight-color:transparent; user-select:none; text-decoration:none;
+}
+.cs-fab-btn:hover{ transform:scale(1.07); }
+.cs-fab-toggle{ font-size:22px; }
+.cs-fab-toggle:hover,.cs-fab.is-open .cs-fab-toggle{ background:var(--accent); }
+.cs-fab-up,.cs-fab-down{ background:rgb(43,23,3); color:#fff; }
+.cs-fab-close{ background:#2B1703; color:#fff; }
+.cs-fab-menu{
+  display:flex; flex-direction:column; align-items:flex-end; gap:8px;
+  max-height:0; overflow:hidden; opacity:0;
+  transition:max-height 250ms var(--ease-1, cubic-bezier(.33,0,0,1)), opacity 200ms ease;
+}
+.cs-fab.is-open .cs-fab-menu{ max-height:160px; opacity:1; }
+.cs-fab-menu .nav-pill{ width:auto; }
+@media (max-width:720px){
+  .cs-fab{ right:12px; }
+  .cs-fab-btn{ width:40px; height:40px; }
+}
+
+</style>
+</head>
+<body>
+<header class="header_wrapper">
+  <div class="container">
+    <nav class="nav-row" aria-label="primary">
+      <a class="nav-pill home" href="index.html"><span class="name-full">benjamin lemar — conceptual designer</span><span class="name-short">benjamin lemar</span></a>
+      <a class="nav-pill nav-practice" href="practice.html">practice</a>
+      <a class="nav-pill nav-fss" href="futuresupersonic.html">futuresupersonic</a>
+    </nav>
+  </div>
+</header>
+
+<main class="main-content cs">
+  <div class="container">
+
+    <h1 class="cs-title">KEIF:Moving Bench</h1>
+
+    <div class="cs-meta">
+      <div class="cs-meta-k">Prototype 41</div>
+      <div class="cs-meta-v">A study in anticipatory spatial ergonomics.<br>One exploratory case within the broader KEIF framework.</div>
+    </div>
+
+    <div class="cs-row"><div class="cs-h"></div><div class="cs-b cs-lead"><p>Imagine sitting on a park bench when it begins to rain, and the bench responds, providing for you, simply because you are there. Imagine objects that don’t wait for you to touch them, that react simply because you’ve arrived.</p><p>That question is what Moving Bench is built on.</p></div></div>
+
+    <figure class="cs-figure"><img src="images/moving-bench/figure-moving-bench-intro.jpg" alt=""/></figure>
+
+    <p class="cs-quote">What if the bench had a sense<br>of empathy?</p>
+
+    <figure class="cs-figure"><video src="images/moving-bench/video-bench-demo.mp4" poster="images/moving-bench/video-bench-demo-poster.jpg" autoplay loop muted playsinline></video></figure>
+
+    <div class="cs-row"><div class="cs-h">The Problem: The Indifferent Interface</div><div class="cs-b"><p>Objects today share our space but anticipate nothing. They sit behind glass, or sit in the room inert, indifferent to us until we issue a physical command: a click, a tap, a press. This creates a constant command and response loop that is more tiring than it looks. Touchless systems are meant to solve it, but they usually make it worse: holding a gesture in midair produces “gorilla arm,” where the effort of interacting outweighs anything you gain.</p><p>The problem isn’t touch versus touchless. It’s that the object waits to be commanded at all.</p></div></div>
+
+    <figure class="cs-figure cs-sm"><img src="images/moving-bench/figure-touch-vs-touchless.jpg" alt=""/></figure>
+
+    <div class="cs-row"><div class="cs-h">The Philosophy: Presence Over Command</div><div class="cs-b"><p>Interaction in the physical world doesn’t begin with a touch. It begins with presence. Before you reach for something, you’ve already approached it, oriented toward it, slowed down near it. Prototype 41 treats those moments, proximity, hesitation, directional momentum, the way a hand opens before it acts, as meaningful interaction states in their own right, not noise to be filtered out before the “real” command arrives.</p><p>Instead of forcing the body to conform to the hardware, the interface follows the logic of the body, treating the air as a functional surface with weight, friction, and momentum.</p></div></div>
+
+    <figure class="cs-figure cs-sm"><img src="images/moving-bench/figure-air-interface.jpg" alt=""/></figure>
+
+    
+<div class="cs-row cs-tech">
+  <div class="cs-h"></div>
+  <div class="cs-b">
+    <div class="cs-tech-lead"><b>Technical Architecture :</b> To move past the limitations of traditional touchless systems, Prototype 41 utilizes a proprietary dual filtering logic to separate broad presence from precise intent.</div>
+    <div class="cs-tech-restate">To move past the limitations of traditional touchless systems, Prototype 41 utilizes a proprietary dual filtering logic to separate broad presence from precise intent.</div>
+    <div class="cs-cards">
+      <div class="cs-card"><span class="num">1</span><h3>Dual Filtering Logic</h3><p>Two Exponential Moving Average (EMA) filters manage live input to ensure stability.</p><ul><li>Slow Filter (α = 0.12): manages the physics of rotation and environmental movement, providing a sense of mass and inertia.</li><li>Fast Filter (α = 0.35): handles high speed cursor tracking and selection precision.</li></ul></div>
+      <div class="cs-card"><span class="num">2</span><h3>Physics and Friction</h3><p>The world state is governed by a friction constant of 0.88. This ensures that digital elements behave like physical objects with weight, preventing the “twitchy” or jittery movement common in optical sensing.</p></div>
+      <div class="cs-card"><span class="num">3</span><h3>Geometric Span Scaling</h3><p>The environment breathes and scales based on the optical distance between the thumb and pinky finger. The interface literally adjusts its dimensions to match the physical reach of the user in real time.</p></div>
+      <div class="cs-card"><span class="num">4</span><h3>Dwell Mechanics</h3><p>Stillness is treated as a deliberate functional action. A 680&thinsp;ms dwell timer acts as the selection bridge, rewarding focus and intent over constant motion.</p></div>
+    </div>
+  </div>
+</div>
+
+
+    <figure class="cs-figure"><video src="images/moving-bench/video-dwell-mechanics.mp4" poster="images/moving-bench/video-dwell-mechanics-poster.jpg" autoplay loop muted playsinline></video></figure>
+
+    <div class="cs-row"><div class="cs-h">What the System Started Doing</div><div class="cs-b"><p>Partway through development, the system began behaving less like a cursor and more like a spatial organism. Movement stopped reading as direct control and started reading as tension, proximity, resistance, and drift inside a shared field. It was no longer reacting to commands. It was negotiating proximity, inertia, hesitation, and intent.</p><p>That small behavioural shift turned out to be the whole idea. This is what predictive, embodied ergonomics actually feels like from the inside, and it became the foundation everything else in KEIF builds on.</p></div></div>
+
+    <figure class="cs-figure"><img src="images/moving-bench/figure-ergonomics.jpg" alt=""/></figure>
+
+    <div class="cs-row"><div class="cs-h">Off the Glass</div><div class="cs-b"><p>Everything above happens on a screen. But the principle doesn’t live in the screen. It lives in the relationship between a person and a responsive field.</p><p>The real question Prototype 41 raises is what happens when physical objects inherit this logic. Today, objects share our space but anticipate nothing; they wait to be operated, exactly like the indifferent interface. If an object could read the conditions around a person, their proximity, their state, their environment, and adapt before being asked, the entire texture of using it would change.</p><p>The bench is the demonstration. These are early sketches of where the principle goes next.</p></div></div>
+
+    <figure class="cs-figure"><img src="images/moving-bench/figure-sketches-next.jpg" alt=""/></figure>
+
+    <div class="cs-concepts"><div class="cs-concept"><div class="ph"><img src="images/moving-bench/concept-bench-lead.jpg" alt=""/></div><h3>Umbrella Adaptability</h3><p>An umbrella that responds to its own situation. It contracts in a crowd or a narrow space and opens out when there is room, adapting its form to protect the person without them managing it. Anticipatory function at the scale of a single object you carry.</p></div><div class="cs-concept"><div class="ph"><img src="images/moving-bench/concept-umbrella-adaptability.jpg" alt=""/></div><h3>Workstation Adaptability</h3><p>A workstation that isn’t a fixed table but a responsive arrangement, surface and seating that move on their own. When the sun falls too harshly across it, the table drifts out of the light; when a group of four gathers, the station reconfigures around them. It adapts in its own breath, rather than waiting for someone to drag a chair or adjust a blind.</p></div><div class="cs-concept"><div class="ph"><img src="images/moving-bench/concept-workstation-adaptability.jpg" alt=""/></div><h3>Public Adaptability</h3><p>Environments that respond to crowds, reading how people gather, flow, and bottleneck, and reshaping to move them through space more easily. Anticipatory design at the scale of many bodies at once.</p></div><div class="cs-concept"><div class="ph"><img src="images/moving-bench/concept-public-adaptability.jpg" alt=""/></div><h3>Barrier Free Adaptability</h3><p>Physical environments that reconfigure for an individual in the moment, using sensing and AI to read who is moving through and how, and changing physically to help them. Anticipation in service of access. Space that adjusts to a person’s needs instead of forcing the person to adjust to it.</p></div></div>
+
+    <div class="cs-row"><div class="cs-h">Toward Anticipatory Systems</div><div class="cs-b"><p>Prototype 41 exists as an early exploration into systems capable of adapting through inferred behavioural understanding rather than explicit instruction alone.</p><p>Rather than optimizing only for efficiency, KEIF investigates how objects, environments, and interfaces might eventually negotiate with human presence in more spatially responsive and physically supportive ways.</p><p>The Moving Bench functions as one exploratory study within a broader investigation into anticipatory behavioural adaptation across future systems.</p></div></div>
+
+    <div class="cs-backbottom"><a href="index.html">←&nbsp;&nbsp;Back to all projects</a></div>
+
+    <footer class="footer-row">
+      <span class="pill" data-copy="hello@benjaminlemar.com" style="cursor:pointer">hello@benjaminlemar.com</span>
+      <span class="pill no-hover">©&nbsp; 2026&nbsp; benjamin lemar</span>
+    </footer>
+
+  </div>
+</main>
+
+
+<script>
+(function(){'use strict';
+ const header=document.querySelector('.header_wrapper');
+ if(header){let lastY=window.scrollY,t=false;
+  function s(){const y=window.scrollY; if(Math.abs(y-lastY)<1){t=false;return;}
+   if(y>lastY&&y>60)header.classList.add('is-hidden');else header.classList.remove('is-hidden');
+   lastY=y;t=false;}
+  window.addEventListener('scroll',()=>{if(!t){requestAnimationFrame(s);t=true;}},{passive:true});}
+ const menuToggle=document.querySelector('[data-mobile-toggle]');
+ if(menuToggle&&header){menuToggle.addEventListener('click',e=>{if(!window.matchMedia('(max-width:720px)').matches)return;e.preventDefault();const open=header.classList.toggle('menu-open');menuToggle.setAttribute('aria-expanded',open);});}
+ document.addEventListener('click',e=>{if(!window.matchMedia('(max-width:720px)').matches)return;if(!header.classList.contains('menu-open'))return;if(header.contains(e.target))return;header.classList.remove('menu-open');if(menuToggle)menuToggle.setAttribute('aria-expanded','false');});
+ document.querySelectorAll('.nav-pill').forEach(p=>{p.addEventListener('click',()=>{if(!window.matchMedia('(max-width:720px)').matches)return;if(p===menuToggle)return;header.classList.remove('menu-open');if(menuToggle)menuToggle.setAttribute('aria-expanded','false');});});
+ document.querySelectorAll('[data-copy]').forEach(el=>{el.addEventListener('click',async()=>{try{await navigator.clipboard.writeText(el.getAttribute('data-copy'));const o=el.textContent;el.textContent='copied';setTimeout(()=>{el.textContent=o;},1200);}catch(e){}});});
+})();
+</script>
+
+
+<div id="cs-nav-sentinel" aria-hidden="true"></div>
+<nav class="cs-fab" aria-label="page navigation">
+  <button type="button" class="cs-fab-btn cs-fab-toggle" aria-label="menu" aria-expanded="false">+</button>
+  <div class="cs-fab-menu" role="menu">
+    <a class="nav-pill" role="menuitem" href="index.html">benjamin lemar</a>
+    <a class="nav-pill" role="menuitem" href="practice.html">practice</a>
+    <a class="nav-pill" role="menuitem" href="futuresupersonic.html">futuresupersonic</a>
+  </div>
+  <button type="button" class="cs-fab-btn cs-fab-up" aria-label="scroll to top">↑</button>
+  <button type="button" class="cs-fab-btn cs-fab-down" aria-label="scroll to bottom">↓</button>
+  <a class="cs-fab-btn cs-fab-close" href="practice.html" aria-label="back to practice">×</a>
+</nav>
+
+<script>
+(function(){'use strict';
+ var fab=document.querySelector('.cs-fab');
+ var sentinel=document.getElementById('cs-nav-sentinel');
+ if(fab&&sentinel&&'IntersectionObserver' in window){
+   var io=new IntersectionObserver(function(entries){
+     entries.forEach(function(e){ fab.classList.toggle('is-visible', !e.isIntersecting); });
+   },{threshold:0});
+   io.observe(sentinel);
+ } else if(fab){ fab.classList.add('is-visible'); }
+ if(fab){
+   var toggle=fab.querySelector('.cs-fab-toggle');
+   if(toggle){ toggle.addEventListener('click',function(){ var open=fab.classList.toggle('is-open'); toggle.setAttribute('aria-expanded',open?'true':'false'); }); }
+   var up=fab.querySelector('.cs-fab-up'); if(up){ up.addEventListener('click',function(){ window.scrollTo({top:0,behavior:'smooth'}); }); }
+   var down=fab.querySelector('.cs-fab-down'); if(down){ down.addEventListener('click',function(){ window.scrollTo({top:document.documentElement.scrollHeight,behavior:'smooth'}); }); }
+   fab.querySelectorAll('.cs-fab-menu .nav-pill').forEach(function(p){ p.addEventListener('click',function(){ fab.classList.remove('is-open'); if(toggle) toggle.setAttribute('aria-expanded','false'); }); });
+ }
+})();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>109 Cinemas — benjamin lemar</title>
+<style>
+  :root { --bg: #f6f6f6; --text: rgb(43,23,3); --accent: #b7ff00; --radius: 45px; --gutter: 30px; --nav-gap: 11px; --pill-bg: #ebebeb; }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--bg); color: var(--text); font-family: 'Instrument Sans', sans-serif; font-size: 13px; scrollbar-gutter: stable; }
+  @import url('https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500&display=swap');
+  .container { max-width: 1392px; margin: 0 auto; padding-inline: var(--gutter); }
+  .header_wrapper { padding: 16px 0; }
+  .nav-row { display: flex; gap: var(--nav-gap); }
+  .nav-pill { height: 25px; display: inline-flex; align-items: center; padding: 0 10px; border-radius: var(--radius); background: var(--pill-bg); color: var(--text); text-decoration: none; font: inherit; font-size: 13px; white-space: nowrap; transition: background .25s ease; }
+  .nav-pill:hover { background: var(--accent); }
+  .nav-pill.home { flex: 0 0 49.55%; }
+  .nav-pill.nav-practice { flex: 0 0 24.40%; }
+  .nav-pill.nav-fss { flex: 0 0 24.40%; }
+  .content { padding: 60px 0 120px; }
+  .case-title { font-size: 20px; letter-spacing: -0.5px; margin-bottom: 12px; }
+  .case-sub { color: rgba(43,23,3,0.45); font-size: 13px; margin-bottom: 40px; }
+  .back-link { display: inline-flex; align-items: center; height: 25px; padding: 0 12px; border-radius: var(--radius); background: var(--pill-bg); color: var(--text); text-decoration: none; font: inherit; font-size: 13px; transition: background .25s ease; }
+  .back-link:hover { background: var(--accent); }
+</style>
+</head>
+<body>
+<header class="header_wrapper">
+  <div class="container">
+    <nav class="nav-row">
+      <a class="nav-pill home" href="index.html">benjamin lemar — conceptual designer</a>
+      <a class="nav-pill nav-practice" href="practice.html">practice</a>
+      <a class="nav-pill nav-fss" href="futuresupersonic.html">futuresupersonic</a>
+    </nav>
+  </div>
+</header>
+<main class="content">
+  <div class="container">
+    <h1 class="case-title">109 Cinemas</h1>
+    <p class="case-sub">Case study coming soon — this project is currently being prepared and is not yet available for viewing.</p>
+    <a class="back-link" href="practice.html">← Back to Practice</a>
+  </div>
+</main>
+</body>
+</html>

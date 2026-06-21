@@ -1,0 +1,717 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Tea Factory Gen — TFG Onomichi · benjamin lemar</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* =========================================================
+   TOKENS — shared with index.html (single source of truth)
+   ========================================================= */
+:root {
+  --bg: #f6f6f6;
+  --text: rgb(43, 23, 3);
+  --muted: rgba(43, 23, 3, 0.55);
+  --pill-bg: #eeeeee;
+  --pill-bg-hover: #e4e4e4;
+  --accent: #b7ff00;
+  --conf: rgba(43, 23, 3, 0.25);
+
+  --content-max: 1332px;
+  --gutter: 30px;
+  --gap: 8px;
+  --nav-gap: 11px;
+
+  --pill-h: 25px;
+  --radius: 45px;        /* corner radius for all pills + nav pills */
+  --pill-pad-y: 0px;
+  --pill-pad-x: 5px;
+  --fs: clamp(12px, 2vw, 12.6px);
+  --ls: -0.005em;
+
+  --ease-1: cubic-bezier(0.33, 0, 0, 1);
+  --ease-2: cubic-bezier(0.33, 0, 0.66, 1);
+  --ease-3: cubic-bezier(0.25, 0, 0, 0.75);
+
+  --nav-home:        31.98%;
+  --nav-experiments: 20.35%;
+  --nav-work:         8.93%;
+  --nav-archived:    11.79%;
+  --nav-fss:         11.71%;
+  --nav-about:       11.11%;
+
+  /* Case-study specific rails (measured from the design mockup) */
+  --cs-rail: 7%;     /* left indent of titles + section labels (~93px @ 1332) */
+  --cs-col: 47%;     /* width of right-hand text columns (~626px @ 1332) */
+  --cs-body: clamp(18px, 2.1vw, 24px);
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Instrument Sans', system-ui, sans-serif;
+  font-size: var(--fs);
+  line-height: 1.2;
+  letter-spacing: var(--ls);
+  font-weight: 400;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  font-feature-settings: "kern";
+  font-kerning: normal;
+}
+
+::selection { background-color: var(--accent); color: var(--text); }
+
+a { color: inherit; text-decoration: none; }
+img, video { display: block; max-width: 100%; height: auto; }
+
+/* =========================================================
+   SHARED CONTAINER — nav + content always share these edges
+   ========================================================= */
+.container {
+  width: 100%;
+  max-width: calc(var(--content-max) + var(--gutter) * 2);
+  margin: 0 auto;
+  padding: 0 var(--gutter);
+}
+
+/* =========================================================
+   HEADER / NAV  (identical system to index.html)
+   ========================================================= */
+.header_wrapper {
+  position: fixed;
+  top: 12px;
+  left: 0; right: 0;
+  z-index: 100;
+  background: var(--bg);
+  transition: transform 250ms var(--ease-1);
+}
+.header_wrapper.is-hidden { transform: translateY(-200%); }
+
+.nav-row { display: flex; gap: var(--nav-gap); width: 100%; }
+
+.nav-pill {
+  border-radius: var(--radius);
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-start;
+  height: var(--pill-h);
+  padding: var(--pill-pad-y) var(--pill-pad-x);
+  background: var(--pill-bg);
+  color: var(--text);
+  font-size: var(--fs);
+  line-height: 1;
+  letter-spacing: var(--ls);
+  cursor: pointer;
+  white-space: nowrap;
+  user-select: none;
+  transition: background 120ms var(--ease-1);
+  width: auto;
+  flex: 0 0 auto;
+}
+.nav-pill:hover { background: var(--accent); }
+.nav-pill.is-active { background: var(--accent); }
+.nav-pill.home { overflow: hidden; text-overflow: ellipsis; }
+
+.nav-pill.home            { width: var(--nav-home); }
+.nav-pill.nav-experiments { width: var(--nav-experiments); }
+.nav-pill.nav-work        { width: var(--nav-work); }
+.nav-pill.nav-archived    { width: var(--nav-archived); }
+.nav-pill.nav-fss         { width: var(--nav-fss); }
+.nav-pill.nav-about       { width: var(--nav-about); }
+.nav-pill.nav-menu-toggle { display: none; }
+
+.nav-pill.home .name-full  { display: inline; }
+.nav-pill.home .name-short { display: none; }
+
+/* =========================================================
+   CASE STUDY LAYOUT
+   ========================================================= */
+.cs-main { padding-top: 137px; padding-bottom: 40px; }
+
+/* Title + sub-label — airy editorial top, indented to the rail */
+.cs-title {
+  margin-left: var(--cs-rail);
+  margin-top: 50px;
+  font-size: 32px;
+  line-height: 1.08;
+  letter-spacing: -0.02em;
+  font-weight: 400;
+}
+.cs-sublabel {
+  margin-left: var(--cs-rail);
+  margin-top: 232px;
+  margin-bottom: 70px;
+}
+.cs-sublabel .main { color: var(--text); font-size: 22px; font-weight: 400; line-height: 1.22; letter-spacing: -0.015em; }
+.cs-sublabel .sub  { color: var(--muted); margin-top: 3px; font-size: 22px; font-weight: 400; line-height: 1.22; letter-spacing: -0.015em; }
+
+/* Section labels (rail-indented, optional grey sub-line) */
+.cs-label {
+  margin-left: var(--cs-rail);
+  margin-bottom: 22px;
+}
+.cs-label .main { color: var(--text); font-size: 22px; font-weight: 400; line-height: 1.22; letter-spacing: -0.015em; }
+.cs-label .sub  { color: var(--muted); margin-top: 3px; font-size: var(--fs); }
+
+/* Vertical rhythm between major blocks */
+.cs-block { margin-bottom: 90px; }
+.cs-block.tight { margin-bottom: 56px; }
+
+/* Figures (images) */
+.cs-figure { width: 100%; }
+.cs-figure img { width: 100%; display: block; }
+.cs-figure.left { margin-left: 0; }
+.cs-figure.w72  { width: 72%; }
+.cs-cap {
+  margin-top: 8px;
+  color: var(--muted);
+  font-size: var(--fs);
+  text-align: right;
+}
+
+/* Text block pinned to the right column (left side intentionally empty) */
+.cs-textblock {
+  width: var(--cs-col);
+  margin-left: auto;
+}
+.cs-textblock p { font-size: var(--cs-body); line-height: 1.45; }
+.cs-textblock p + p { margin-top: 1.25em; }
+
+/* Image-left + text-right split row */
+.cs-split {
+  display: flex;
+  gap: var(--gap);
+  align-items: flex-start;
+}
+.cs-split .col-img { flex: 0 0 auto; }
+.cs-split .col-img.w47 { width: 47%; }
+.cs-split .col-img.w23 { width: 23%; }
+.cs-split .col-img img { width: 100%; }
+.cs-split .col-text {
+  flex: 0 0 var(--cs-col);
+  width: var(--cs-col);
+  margin-left: auto;
+}
+.cs-split .col-text p { font-size: var(--cs-body); line-height: 1.45; }
+.cs-split .col-text p + p { margin-top: 1.25em; }
+.cs-split .col-text .hl { color: var(--text); }
+.cs-split .col-text.dim p { color: var(--muted); }
+.cs-split .col-text.dim .hl { color: var(--text); }
+
+/* Direction cards (A–E): rail label left, grey cards right */
+.cs-directions { display: flex; gap: var(--gap); align-items: flex-start; }
+.cs-directions .rail-label {
+  flex: 0 0 auto;
+  margin-left: var(--cs-rail);
+  padding-right: var(--gap);
+}
+.cs-directions .cards {
+  flex: 0 0 var(--cs-col);
+  width: var(--cs-col);
+  margin-left: auto;
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap);
+}
+.cs-card { background: var(--pill-bg); padding: 22px 26px 26px; }
+.cs-card .letter { font-size: 26px; line-height: 1; margin-bottom: 26px; }
+.cs-card h4 { font-weight: 500; font-size: var(--fs); margin-bottom: 6px; }
+.cs-card p { color: var(--muted); font-size: var(--fs); line-height: 1.5; }
+.cs-card p + p { margin-top: 1em; }
+
+/* Image pair (medium, left-aligned to the rail) */
+.cs-pair {
+  display: flex;
+  gap: 64px;
+  margin-left: var(--cs-rail);
+}
+.cs-pair .item { flex: 0 0 30%; width: 30%; }
+.cs-pair .item img { width: 100%; }
+
+/* Closing statement — large muted right column with a highlighted lead word */
+.cs-closing {
+  width: var(--cs-col);
+  margin-left: auto;
+  margin-top: 70px;
+}
+.cs-closing p {
+  font-size: clamp(18px, 2.1vw, 24px);
+  line-height: 1.35;
+  color: var(--muted);
+}
+.cs-closing .hl { color: var(--text); }
+.cs-closing p + p { margin-top: 1.25em; }
+
+/* Back link footer */
+.cs-back {
+  display: flex;
+  justify-content: center;
+  padding: 130px 0 120px;
+}
+.cs-back a {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--muted);
+  transition: color 120ms var(--ease-1);
+}
+.cs-back a:hover { color: var(--text); }
+
+/* =========================================================
+   MOBILE (≤ 720px)
+   ========================================================= */
+@media (max-width: 720px) {
+  :root { --gutter: 12px; --gap: 6px; --nav-gap: 8px; --cs-rail: 0px; --cs-col: 100%; }
+
+  .cs-main { padding-top: 110px; }
+  .cs-title { font-size: 22px; margin-top: 20px; }
+  .cs-sublabel { margin-top: 60px; margin-bottom: 40px; }
+  .cs-sublabel .main, .cs-sublabel .sub { font-size: 18px; }
+  .cs-block { margin-bottom: 56px; }
+  .cs-label .main { font-size: 18px; }
+
+  /* Nav: home + work + about only, about reveals the rest */
+  .nav-row { flex-wrap: nowrap; justify-content: flex-start; align-items: center; gap: 8px; overflow: visible; }
+  .nav-pill { flex: 0 0 auto; width: auto; }
+  .nav-pill.home,
+  .nav-pill.nav-experiments,
+  .nav-pill.nav-work,
+  .nav-pill.nav-archived,
+  .nav-pill.nav-fss,
+  .nav-pill.nav-about { width: auto; }
+  .nav-pill.home { flex: 1 1 0; min-width: 0; order: 1; }
+  .nav-pill.home .name-full  { display: none; }
+  .nav-pill.home .name-short { display: inline; }
+  .nav-pill.nav-work  { order: 2; flex: 0 0 auto; }
+  .nav-pill.nav-about { order: 3; flex: 0 0 auto; }
+  .nav-pill.nav-experiments,
+  .nav-pill.nav-archived,
+  .nav-pill.nav-fss {
+    position: absolute; right: var(--gutter); width: auto; flex: 0 0 auto;
+    opacity: 0; pointer-events: none; transform: translateY(-6px);
+    transition: opacity 200ms var(--ease-1), transform 200ms var(--ease-1);
+  }
+  .header_wrapper.menu-open .nav-pill.nav-experiments { opacity: 1; pointer-events: auto; transform: translateY(0); top: calc(100% + 8px); }
+  .header_wrapper.menu-open .nav-pill.nav-archived    { opacity: 1; pointer-events: auto; transform: translateY(0); top: calc(100% + 8px + 38px); }
+  .header_wrapper.menu-open .nav-pill.nav-fss         { opacity: 1; pointer-events: auto; transform: translateY(0); top: calc(100% + 8px + 76px); }
+  .nav-pill.nav-experiments { transition-delay: 0ms; }
+  .nav-pill.nav-archived    { transition-delay: 60ms; }
+  .nav-pill.nav-fss         { transition-delay: 120ms; }
+
+  .nav-pill.nav-menu-toggle {
+    display:inline-flex; align-items:center; justify-content:center;
+    order:4; flex:0 0 auto; width:var(--pill-h); height:var(--pill-h);
+    padding:0; border-radius:50%; font-size:16px; line-height:1;
+  }
+
+  /* Content: everything stacks full width */
+  .cs-textblock { width: 100%; margin-left: 0; }
+  .cs-figure.w72 { width: 100%; }
+
+  .cs-split { flex-direction: column; gap: 18px; }
+  .cs-split .col-img.w47,
+  .cs-split .col-img.w23 { width: 70%; }
+  .cs-split .col-text { width: 100%; flex: 0 0 100%; margin-left: 0; }
+
+  .cs-directions { flex-direction: column; gap: 16px; }
+  .cs-directions .rail-label { margin-left: 0; }
+  .cs-directions .cards { width: 100%; flex: 0 0 100%; margin-left: 0; }
+
+  .cs-pair { flex-direction: column; gap: 12px; margin-left: 0; }
+  .cs-pair .item { width: 70%; }
+
+  .cs-closing { width: 100%; margin-left: 0; }
+  .cs-back { padding: 70px 0 80px; }
+}
+
+/* ===== In 10 Seconds annotation component ===== */
+.cs-10s {
+  width: var(--cs-col);
+  margin-left: auto;
+  background: var(--pill-bg);
+  border-radius: 10px;
+  padding: 18px 22px 20px;
+}
+.cs-10s-label {
+  font-size: var(--fs);
+  font-weight: 500;
+  color: var(--text);
+  margin-bottom: 10px;
+}
+.cs-10s-body p {
+  font-size: var(--fs);
+  line-height: 1.55;
+  color: var(--muted);
+}
+.cs-10s-body p + p { margin-top: 4px; }
+@media (max-width: 720px) {
+  .cs-10s { width: 100%; margin-left: 0; }
+}
+
+/* ===== three-pill nav (canonical, matches index.html / practice.html) ===== */
+:root{ --nav-home:49.55%; --nav-practice:24.40%; --nav-fss:24.40%; }
+.nav-pill.home{ width:var(--nav-home); }
+.nav-pill.nav-practice{ width:var(--nav-practice); }
+.nav-pill.nav-fss{ width:var(--nav-fss); }
+@media (max-width:720px){
+  .nav-pill.home,.nav-pill.nav-practice,.nav-pill.nav-fss{
+    position:static; opacity:1; pointer-events:auto; transform:none; width:auto; transition-delay:0ms; top:auto;
+  }
+  .nav-pill.home{ flex:1 1 0; min-width:0; order:1; }
+  .nav-pill.home .name-full{ display:none; } .nav-pill.home .name-short{ display:inline; }
+  .nav-pill.nav-practice{ order:2; flex:0 0 auto; }
+  .nav-pill.nav-fss{ order:3; flex:0 0 auto; }
+}
+
+/* ===== scrolling case-study float nav ===== */
+#cs-nav-sentinel{ position:absolute; top:100px; left:0; width:1px; height:1px; pointer-events:none; }
+.cs-fab{
+  position:fixed; right:30px; top:50%;
+  transform:translateY(-50%) translateX(20px);
+  display:flex; flex-direction:column; align-items:flex-end; gap:10px;
+  z-index:120; opacity:0; pointer-events:none;
+  transition:opacity 250ms var(--ease-1, cubic-bezier(.33,0,0,1)), transform 250ms var(--ease-1, cubic-bezier(.33,0,0,1));
+}
+.cs-fab.is-visible{ opacity:1; pointer-events:auto; transform:translateY(-50%) translateX(0); }
+.cs-fab-btn{
+  width:44px; height:44px; border-radius:50%; border:none; cursor:pointer; padding:0;
+  display:inline-flex; align-items:center; justify-content:center;
+  font-size:18px; line-height:1; font-family:inherit; letter-spacing:0;
+  background:var(--pill-bg); color:var(--text, rgb(43,23,3));
+  transition:background 150ms var(--ease-1, cubic-bezier(.33,0,0,1)), color 150ms ease, transform 150ms ease;
+  -webkit-tap-highlight-color:transparent; user-select:none; text-decoration:none;
+}
+.cs-fab-btn:hover{ transform:scale(1.07); }
+.cs-fab-toggle{ font-size:22px; }
+.cs-fab-toggle:hover,.cs-fab.is-open .cs-fab-toggle{ background:var(--accent); }
+.cs-fab-up,.cs-fab-down{ background:rgb(43,23,3); color:#fff; }
+.cs-fab-close{ background:#2B1703; color:#fff; }
+.cs-fab-menu{
+  display:flex; flex-direction:column; align-items:flex-end; gap:8px;
+  max-height:0; overflow:hidden; opacity:0;
+  transition:max-height 250ms var(--ease-1, cubic-bezier(.33,0,0,1)), opacity 200ms ease;
+}
+.cs-fab.is-open .cs-fab-menu{ max-height:160px; opacity:1; }
+.cs-fab-menu .nav-pill{ width:auto; }
+@media (max-width:720px){
+  .cs-fab{ right:12px; }
+  .cs-fab-btn{ width:40px; height:40px; }
+}
+
+</style>
+</head>
+<body>
+
+<!-- =========================================================
+     HEADER — same nav system as index.html, links return to feed
+     ========================================================= -->
+<header class="header_wrapper">
+  <div class="container">
+    <nav class="nav-row" aria-label="primary">
+      <a class="nav-pill home" href="index.html"><span class="name-full">benjamin lemar — conceptual designer</span><span class="name-short">benjamin lemar</span></a>
+      <a class="nav-pill nav-practice" href="practice.html">practice</a>
+      <a class="nav-pill nav-fss" href="futuresupersonic.html">futuresupersonic</a>
+    </nav>
+  </div>
+</header>
+
+<!-- =========================================================
+     MAIN — case study content, same .container as nav
+     ========================================================= -->
+<main class="cs-main">
+  <div class="container">
+
+    <!-- Title -->
+    <h1 class="cs-title">Tea Factory Gen - Reintroducing Tea</h1>
+
+    <!-- Sub-label -->
+    <div class="cs-sublabel">
+      <div class="main">Reintroducing The Culture of Tea</div>
+      <div class="sub">TFG New Onomichi Experience</div>
+    </div>
+
+    <!-- In 10 Seconds annotation -->
+    <div class="cs-10s">
+      <div class="cs-10s-label">In 10 Seconds</div>
+      <div class="cs-10s-body">
+        <p>Great products were being overlooked.</p>
+        <p>Improve visibility and approachability without changing the product.</p>
+        <p>Use environmental cues to increase awareness and store entry.</p>
+      </div>
+    </div>
+
+    <!-- Hero image (caption baked into the render) -->
+    <div class="cs-block">
+      <figure class="cs-figure">
+        <img src="images/tfg-onomichi-retailfront/tfg-hero.jpg" alt="Tea Factory Gen Onomichi storefront — image and store design architecture by Masami Nakata-San (studiobasket)" />
+      </figure>
+    </div>
+
+    <!-- Intro narrative (right column) -->
+    <div class="cs-block">
+      <div class="cs-textblock">
+        <p>Tea is deeply embedded in Japanese culture, yet increasingly absent from everyday behavior. For many consumers, tea has become associated with expertise, tradition, and ritual rather than curiosity and discovery.</p>
+        <p>As Tea Factory Gen prepared to expand into a new retail environment, the challenge was not simply to identify the store as a place that sells tea. The challenge was to create a storefront experience capable of attracting people who were not already tea enthusiasts.</p>
+        <p>The resulting visual language explored how typography, environmental graphics, symbolic forms, and storefront interventions could transform the facade from a static identifier into a tool for engagement.</p>
+        <p>Rather than communicating tea as a product, the system was designed to communicate tea as an experience worth exploring.</p>
+      </div>
+    </div>
+
+    <!-- Research moodboard + facade pair -->
+    <div class="cs-block">
+      <div class="cs-split">
+        <div class="col-img w47" style="width:60%">
+          <img src="images/tfg-onomichi-retailfront/tfg-moodboard.jpg" alt="Research moodboard — typography, illustration and signage studies" />
+        </div>
+        <div class="col-img" style="width:38%;margin-left:auto">
+          <img src="images/tfg-onomichi-retailfront/tfg-facade.jpg" alt="Facade material study and entrance render" />
+        </div>
+      </div>
+    </div>
+
+    <!-- Annotated storefront render -->
+    <div class="cs-block">
+      <figure class="cs-figure">
+        <img src="images/tfg-onomichi-retailfront/tfg-render-signs.jpg" alt="Storefront render with TEA FACTORY GEN sign and 茶 sign annotations" />
+      </figure>
+    </div>
+
+    <!-- Initial conceptual process -->
+    <div class="cs-block">
+      <div class="cs-label"><div class="main">Initial conceptual process</div></div>
+      <div class="cs-split">
+        <div class="col-img w47">
+          <img src="images/tfg-onomichi-retailfront/tfg-concept-set.gif" alt="Concept sheet DS2 — sign graphic concept" />
+        </div>
+        <div class="col-text dim">
+          <p>The initial exploration focused on identifying visual signals capable of attracting attention beyond existing tea consumers. Rather than beginning with products, packaging, or traditional tea imagery, the process investigated the cultural artifacts, symbols, behaviours, and visual languages surrounding tea.</p>
+          <p>Through studies of typography, vernacular signage, Japanese graphic culture, symbolic forms, and environmental interventions, the work explored how familiarity and curiosity could coexist within the storefront. The objective was to discover visual devices that could communicate tea indirectly, encouraging people to engage with the space before understanding exactly what it offered.</p>
+          <p>These early explorations established the foundation for later concept directions, helping define how Tea Factory Gen could feel contemporary, accessible, and culturally grounded without relying on conventional tea retail cues.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Late stage concept development -->
+    <div class="cs-block">
+      <div class="cs-label"><div class="main">Late Stage Concept Development</div></div>
+      <figure class="cs-figure">
+        <img src="images/tfg-onomichi-retailfront/tfg-board-latestage.jpg" alt="Late stage concept development board — directions A through D" />
+      </figure>
+    </div>
+
+    <!-- 2nd concept design directions: rail label + A–E cards -->
+    <div class="cs-block">
+      <div class="cs-directions">
+        <div class="rail-label">
+          <div class="cs-label" style="margin-left:0;margin-bottom:0"><div class="main">2nd Concept Design Directions</div></div>
+        </div>
+        <div class="cards">
+          <div class="cs-card">
+            <div class="letter">A</div>
+            <h4>Abstract Familiarity</h4>
+            <p>This direction explores abstraction through form rather than direct representation. Drawing loosely from the structure and proportions of the character 茶, the concepts transform the familiar symbol into a series of graphic objects that suggest tea without explicitly depicting it.</p>
+            <p>The objective was to create recognition through association rather than explanation. By moving away from literal representations of tea, the work investigates whether shape, rhythm, and silhouette alone can communicate enough familiarity to attract attention while maintaining a sense of curiosity and discovery.</p>
+          </div>
+          <div class="cs-card">
+            <div class="letter">B</div>
+            <h4>Layered Symbol</h4>
+            <p>This direction uses the kyusu, the traditional Japanese teapot, as a behavioral symbol rather than a product illustration. Through rough digital forms, layered typography, and references to pouring and drinking, the work focuses on the act of tea rather than tea itself.</p>
+            <p>The intention was to create a visual language that feels contemporary while remaining culturally grounded, using familiar rituals and actions to communicate tea through experience rather than direct explanation.</p>
+          </div>
+          <div class="cs-card">
+            <div class="letter">C</div>
+            <h4>Typography as Experience</h4>
+            <p>This direction explores the space between tradition and contemporary visual culture. Rustic textures and atmospheric gradients reference the natural origins of tea, while deconstructed three dimensional teapot forms introduce a sense of movement, experimentation, and reinterpretation.</p>
+            <p>Rather than presenting tea as a fixed cultural object, the work treats it as something open to exploration. The fragmented forms create moments of visual ambiguity that encourage closer inspection, allowing curiosity to become part of the communication itself.</p>
+          </div>
+          <div class="cs-card">
+            <div class="letter">D</div>
+            <h4>Brand Signal</h4>
+            <p>The concept reinterprets existing elements from Tea Factory Gen's visual identity, reducing them to their most recognizable forms and amplifying them through scale, color, and contrast. Combined with atmospheric imagery inspired by the tea fields themselves, the result creates a visual presence that feels simultaneously familiar and forward looking. Rather than communicating through information, the concept relies on visual energy and recognition to attract attention.</p>
+          </div>
+          <div class="cs-card">
+            <div class="letter">E</div>
+            <h4>Symbol As Object</h4>
+            <p>This direction transforms the character 茶 into a three dimensional object, shifting it from language into artifact. The intention was not simply to stylize the character, but to explore how a familiar cultural symbol might operate within a more contemporary visual environment. Through bold colour, dimensionality, and playful distortion, the work investigates whether the symbol itself can become a point of attraction and curiosity, encouraging people to engage before they fully understand what they are seeing.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Symbol-as-object exploration board -->
+    <div class="cs-block">
+      <div class="cs-label"><div class="main">Design Evaluation Criteria</div></div>
+      <div class="cs-textblock">
+        <p>Each concept direction was evaluated against three criteria: recognisability, curiosity, and adaptability. Concepts needed to communicate a connection to tea without relying on literal product imagery, attract attention within a dense urban streetscape, and function across signage, environmental graphics, and future brand applications.</p>
+        <p>These criteria helped narrow a broad range of visual explorations into a smaller set of viable directions for client review.</p>
+      </div>
+    </div>
+
+    <!-- Symbol-as-object exploration board -->
+    <div class="cs-block">
+      <figure class="cs-figure">
+        <img src="images/tfg-onomichi-retailfront/tfg-board-symbol.jpg" alt="Symbol-as-object exploration board — 茶 dimensional studies" />
+      </figure>
+    </div>
+
+    <!-- My directional advice section -->
+    <div class="cs-block">
+      <div class="cs-label">
+        <div class="main">My Directional Advice To The Client Via Design Exploration</div>
+        <div class="sub">TFG New Onomichi Experience</div>
+      </div>
+      <div class="cs-textblock">
+        <p>While several directions successfully communicated tea, I ultimately advised moving toward a solution that balanced cultural recognition with contemporary accessibility.</p>
+        <p>The strongest opportunities emerged when familiar symbols were simplified and amplified rather than completely abstracted. Directions rooted in the character 茶 demonstrated an ability to create immediate recognition while remaining visually distinct from traditional tea retail environments.</p>
+        <p>My recommendation was to treat the storefront as a cultural invitation rather than a product advertisement. By using bold symbolic forms, restrained typography, and highly visible environmental graphics, the facade could attract both tea enthusiasts and casual visitors without requiring prior knowledge or expertise.</p>
+        <p>This approach aligned closely with Tea Factory Gen's ambition to broaden engagement with tea culture while maintaining authenticity to its origins.</p>
+      </div>
+    </div>
+
+    <!-- B symbol explorations (colour studies) -->
+    <div class="cs-block tight">
+      <figure class="cs-figure w72">
+        <img src="images/tfg-onomichi-retailfront/tfg-symbols-b.jpg" alt="Symbol colour studies — variants 1, 2, 3 and 1と3" />
+      </figure>
+    </div>
+
+    <!-- Photo pair: facade + interior -->
+    <div class="cs-block">
+      <div class="cs-pair">
+        <div class="item"><img src="images/tfg-onomichi-retailfront/tfg-photo-facade.jpg" alt="Tea Factory Gen storefront facade photograph" /></div>
+        <div class="item"><img src="images/tfg-onomichi-retailfront/tfg-photo-interior.jpg" alt="Tea Factory Gen interior counter photograph" /></div>
+      </div>
+    </div>
+
+    <!-- Connector board -->
+    <div class="cs-block">
+      <figure class="cs-figure">
+        <img src="images/tfg-onomichi-retailfront/tfg-signboard-marks.gif" alt="Symbol direction board with connectors" />
+      </figure>
+    </div>
+
+    <!-- Scent-behaviour mockup + explanation -->
+    <div class="cs-block">
+      <div class="cs-split">
+        <div class="col-img w23">
+          <img src="images/tfg-onomichi-retailfront/tfg-signage-comps.gif" alt="Scent-driven visual behaviour mockup" />
+        </div>
+        <div class="col-text">
+          <p>The selected direction was further tested through colour, scale, and environmental applications to understand how the symbol would perform across different touchpoints.</p>
+          <p>Particular attention was given to visibility from a distance, recognition at street level, and adaptability across temporary and permanent signage systems. By reducing the visual language to a small number of memorable elements, the storefront gained a stronger presence within the surrounding streetscape while remaining flexible enough to evolve over time.</p>
+          <p>The resulting system demonstrates how a single cultural symbol can operate simultaneously as signage, identity, and environmental graphic, creating a cohesive experience across the entire retail environment.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Final render (caption baked into image) -->
+    <div class="cs-block">
+      <figure class="cs-figure">
+        <img src="images/tfg-onomichi-retailfront/tfg-render-comein.jpg" alt="Final storefront render with temporary digital flex sign" />
+      </figure>
+    </div>
+
+    <!-- Closing statement -->
+    <div class="cs-closing">
+      <p>Tea Factory Gen was never intended to compete through information alone. The opportunity was to create a storefront capable of transforming curiosity into participation.</p>
+      <p>By exploring abstraction, symbolism, typography, and environmental graphics, the project reframed tea not as a specialist product but as a cultural experience worth discovering. The final recommendation demonstrates how strategic visual intervention can help traditional products remain relevant within contemporary retail environments while preserving the authenticity that gives them value.</p>
+    </div>
+
+    <!-- Back link -->
+    <div class="cs-back">
+      <a href="index.html"><span aria-hidden="true">←</span><span>Back to all projects</span></a>
+    </div>
+
+  </div>
+</main>
+
+<script>
+(function () {
+  'use strict';
+  const header = document.querySelector('.header_wrapper');
+
+  /* Scroll hide/show */
+  if (header) {
+    let lastY = window.scrollY, ticking = false;
+    function onScroll() {
+      const y = window.scrollY;
+      if (Math.abs(y - lastY) < 1) { ticking = false; return; }
+      if (y > lastY && y > 60) header.classList.add('is-hidden');
+      else header.classList.remove('is-hidden');
+      lastY = y; ticking = false;
+    }
+    window.addEventListener('scroll', () => {
+      if (!ticking) { requestAnimationFrame(onScroll); ticking = true; }
+    }, { passive: true });
+  }
+
+  /* Mobile [+] pill: toggles menu open/closed */
+  const menuToggle = document.querySelector('[data-mobile-toggle]');
+  if (menuToggle && header) {
+    menuToggle.addEventListener('click', e => {
+      if (!window.matchMedia('(max-width: 720px)').matches) return;
+      e.preventDefault();
+      const open = header.classList.toggle('menu-open');
+      menuToggle.setAttribute('aria-expanded', open);
+    });
+  }
+  document.addEventListener('click', e => {
+    if (!window.matchMedia('(max-width: 720px)').matches) return;
+    if (!header.classList.contains('menu-open')) return;
+    if (header.contains(e.target)) return;
+    header.classList.remove('menu-open');
+    if (menuToggle) menuToggle.setAttribute('aria-expanded', 'false');
+  });
+  document.querySelectorAll('.nav-pill').forEach(p => {
+    p.addEventListener('click', () => {
+      if (!window.matchMedia('(max-width: 720px)').matches) return;
+      if (p === menuToggle) return;
+      if (header) header.classList.remove('menu-open');
+      if (menuToggle) menuToggle.setAttribute('aria-expanded', 'false');
+    });
+  });
+})();
+</script>
+
+<div id="cs-nav-sentinel" aria-hidden="true"></div>
+<nav class="cs-fab" aria-label="page navigation">
+  <button type="button" class="cs-fab-btn cs-fab-toggle" aria-label="menu" aria-expanded="false">+</button>
+  <div class="cs-fab-menu" role="menu">
+    <a class="nav-pill" role="menuitem" href="index.html">benjamin lemar</a>
+    <a class="nav-pill" role="menuitem" href="practice.html">practice</a>
+    <a class="nav-pill" role="menuitem" href="futuresupersonic.html">futuresupersonic</a>
+  </div>
+  <button type="button" class="cs-fab-btn cs-fab-up" aria-label="scroll to top">↑</button>
+  <button type="button" class="cs-fab-btn cs-fab-down" aria-label="scroll to bottom">↓</button>
+  <a class="cs-fab-btn cs-fab-close" href="practice.html" aria-label="back to practice">×</a>
+</nav>
+
+<script>
+(function(){'use strict';
+ var fab=document.querySelector('.cs-fab');
+ var sentinel=document.getElementById('cs-nav-sentinel');
+ if(fab&&sentinel&&'IntersectionObserver' in window){
+   var io=new IntersectionObserver(function(entries){
+     entries.forEach(function(e){ fab.classList.toggle('is-visible', !e.isIntersecting); });
+   },{threshold:0});
+   io.observe(sentinel);
+ } else if(fab){ fab.classList.add('is-visible'); }
+ if(fab){
+   var toggle=fab.querySelector('.cs-fab-toggle');
+   if(toggle){ toggle.addEventListener('click',function(){ var open=fab.classList.toggle('is-open'); toggle.setAttribute('aria-expanded',open?'true':'false'); }); }
+   var up=fab.querySelector('.cs-fab-up'); if(up){ up.addEventListener('click',function(){ window.scrollTo({top:0,behavior:'smooth'}); }); }
+   var down=fab.querySelector('.cs-fab-down'); if(down){ down.addEventListener('click',function(){ window.scrollTo({top:document.documentElement.scrollHeight,behavior:'smooth'}); }); }
+   fab.querySelectorAll('.cs-fab-menu .nav-pill').forEach(function(p){ p.addEventListener('click',function(){ fab.classList.remove('is-open'); if(toggle) toggle.setAttribute('aria-expanded','false'); }); });
+ }
+})();
+</script>
+
+</body>
+</html>
