@@ -540,7 +540,7 @@ button { font: inherit; color: inherit; background: none; border: none; cursor: 
    ========================================================= */
 .cardstack {
   position: absolute;
-  top: 56px;
+  top: 156px; /* lowered ~100px globally so cards clear the top nav */
   right: 18px;
   bottom: 18px;
   width: min(420px, 40vw);
@@ -563,7 +563,7 @@ button { font: inherit; color: inherit; background: none; border: none; cursor: 
 /* a small floating close control that sits above the stack */
 .stack-close {
   position: absolute;
-  top: 56px;
+  top: 156px; /* lowered ~100px to match .cardstack */
   right: 18px;
   width: 30px; height: 30px;
   border-radius: 50%;
@@ -1005,7 +1005,7 @@ button { font: inherit; color: inherit; background: none; border: none; cursor: 
   .nav-pill.nav-practice { order: 2; flex: 0 0 auto; }
   .nav-pill.nav-fss      { order: 3; flex: 0 0 auto; }
 
-  .cardstack { width: min(92vw, 360px); top: 12px; right: 12px; bottom: 12px; }
+  .cardstack { width: min(92vw, 360px); top: 112px; right: 12px; bottom: 12px; }
   .cardstack.is-wide { width: min(92vw, 320px); }
   .anchor { height: 36px; line-height: 36px; padding: 0 18px; }
   .anchor.has-3d { width: 116px; height: 116px; padding: 0; line-height: normal; }
