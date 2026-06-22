@@ -149,8 +149,15 @@ img, video { display: block; max-width: 100%; height: auto; }
 
 .pill.conf {
   color: var(--conf);
-  text-decoration: line-through;
   background: var(--pill-bg);
+}
+
+/* Title pills (not the status badges): match the "tea factory gen" entry —
+   full text colour, normal weight, no strike-through. */
+.pill.conf:not(.conf-right) {
+  color: var(--text);
+  font-weight: 400;
+  text-decoration: none;
 }
 
 .pill.title-bar {
@@ -269,6 +276,16 @@ img, video { display: block; max-width: 100%; height: auto; }
   animation: entryIn 600ms ease forwards;
 }
 @keyframes entryIn { to { opacity: 1; transform: translateY(0); } }
+
+/* gooey staggered entrance for confidential rows when the filter sorts them in */
+@keyframes confRowIn {
+  from { opacity: 0; transform: translateY(14px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.conf-row.conf-pop {
+  animation: confRowIn .5s cubic-bezier(.22,.61,.36,1) both;
+  animation-delay: var(--pop-delay, 0ms);
+}
 
 /* =========================================================
    TAG ROWS — proportional widths summing to 100%
@@ -1029,17 +1046,17 @@ body.ready .feed-entry { animation: none !important; opacity: 1 !important; tran
 
       <!-- [1-3] Confidential — top group -->
       <div class="conf-group" data-cat="work">
-        <div class="conf-row viewable">
-          <a class="pill conf" style="text-decoration:none" href="asahi-beverages.html">Asahi Beverages Japan – Wonda Coffee – UAE/KSA</a>
-          <a class="pill conf conf-right" style="text-decoration:none;background:#fff" href="asahi-beverages.html">2026 · confidential</a>
+        <div class="conf-row">
+          <span class="pill conf title-bar" style="color:rgb(43, 23, 3);padding-left:10px;padding-right:10px"><span class="t-name">Asahi Beverages Japan – Wonda Coffee – UAE/KSA</span><span class="t-year">2026</span></span>
+          <span class="pill conf conf-right" style="background:#FFFFFF;color:#9E9E9E">coming soon</span>
         </div>
-        <div class="conf-row viewable">
-          <a class="pill conf" style="text-decoration:none" href="ajinomoto.html">Ajinomoto Pure Select Japan – USA / Australia</a>
-          <a class="pill conf conf-right" style="text-decoration:none;background:#fff" href="ajinomoto.html">2026 · confidential</a>
+        <div class="conf-row">
+          <span class="pill conf title-bar" style="color:rgb(43, 23, 3);padding-left:10px;padding-right:10px"><span class="t-name">Ajinomoto Pure Select Japan – USA / Australia</span><span class="t-year">2026</span></span>
+          <span class="pill conf conf-right" style="background:#FFFFFF;color:#9E9E9E">coming soon</span>
         </div>
-        <div class="conf-row viewable">
-          <a class="pill conf" style="text-decoration:none" href="cerulean-tower.html">Cerulean Tower Tokyu Hotel</a>
-          <a class="pill conf conf-right" style="text-decoration:none;background:#fff" href="cerulean-tower.html">2026 · confidential</a>
+        <div class="conf-row">
+          <span class="pill conf title-bar" style="color:rgb(43, 23, 3);padding-left:10px;padding-right:10px"><span class="t-name">Cerulean Tower Tokyu Hotel</span><span class="t-year">2026</span></span>
+          <span class="pill conf conf-right" style="background:#FFFFFF;color:#9E9E9E">coming soon</span>
         </div>
       </div>
 
@@ -1069,11 +1086,15 @@ body.ready .feed-entry { animation: none !important; opacity: 1 !important; tran
         </div>
       </div>
 
-      <!-- [5] 109 Cinemas — confidential, single -->
+      <!-- [5] Puma + 109 Cinemas -->
       <div class="conf-group" data-cat="work">
-        <div class="conf-row viewable">
-          <a class="pill conf" style="text-decoration:none" href="109-cinemas.html">109 Cinemas</a>
-          <a class="pill conf conf-right" style="text-decoration:none;background:#fff" href="109-cinemas.html">2025 · confidential</a>
+        <div class="conf-row">
+          <span class="pill conf title-bar" style="color:rgb(43, 23, 3);padding-left:10px;padding-right:10px"><span class="t-name">Puma – H-STREET Activation</span><span class="t-year">2026</span></span>
+          <span class="pill conf conf-right" style="background:#FFFFFF;color:#9E9E9E">confidential</span>
+        </div>
+        <div class="conf-row">
+          <span class="pill conf title-bar" style="color:rgb(43, 23, 3);padding-left:10px;padding-right:10px"><span class="t-name">109 Cinemas</span><span class="t-year">2025</span></span>
+          <span class="pill conf conf-right" style="background:#FFFFFF;color:#9E9E9E">coming soon</span>
         </div>
       </div>
 
@@ -1149,17 +1170,17 @@ body.ready .feed-entry { animation: none !important; opacity: 1 !important; tran
 
       <!-- [9-11] Confidential — middle group -->
       <div class="conf-group" data-cat="work" data-extra="1">
-        <div class="conf-row viewable">
-          <a class="pill conf" style="text-decoration:none" href="bandai-gundam.html">Bandai Gundam – 米航</a>
-          <a class="pill conf conf-right" style="text-decoration:none;background:#fff" href="bandai-gundam.html">2026 · confidential</a>
-        </div>
-        <div class="conf-row viewable">
-          <a class="pill conf" style="text-decoration:none" href="puma-hstreet.html">Puma – H-STREET Activation</a>
-          <a class="pill conf conf-right" style="text-decoration:none;background:#fff" href="puma-hstreet.html">2026 · confidential</a>
+        <div class="conf-row">
+          <span class="pill conf title-bar" style="color:rgb(43, 23, 3);padding-left:10px;padding-right:10px"><span class="t-name">Bandai Gundam – 米国</span><span class="t-year">2025</span></span>
+          <span class="pill conf conf-right" style="background:#FFFFFF;color:#9E9E9E">confidential</span>
         </div>
         <div class="conf-row">
-          <span class="pill conf">P&amp;G Pantene Pro V China</span>
-          <span class="pill conf conf-right">2025 · confidential</span>
+          <span class="pill conf title-bar" style="color:rgb(43, 23, 3);padding-left:10px;padding-right:10px"><span class="t-name">P&amp;G Pantene Pro V China</span><span class="t-year">2024</span></span>
+          <span class="pill conf conf-right" style="background:#2B1703;color:#9E9E9E">archived</span>
+        </div>
+        <div class="conf-row">
+          <span class="pill conf title-bar" style="color:rgb(43, 23, 3);padding-left:10px;padding-right:10px"><span class="t-name">B&amp;E Foods</span><span class="t-year">2024/2025</span></span>
+          <span class="pill conf conf-right" style="background:#2B1703;color:#9E9E9E">archived</span>
         </div>
       </div>
 
@@ -1200,33 +1221,33 @@ body.ready .feed-entry { animation: none !important; opacity: 1 !important; tran
 
       <!-- [14-21] Confidential — large group -->
       <div class="conf-group" data-cat="work" data-extra="1">
-        <div class="conf-row viewable">
-          <a class="pill conf" style="text-decoration:none" href="meiji-digital-experience.html">Meiji Almond and Macadamia Digital Experience</a>
-          <a class="pill conf conf-right" style="text-decoration:none;background:#fff" href="meiji-digital-experience.html">2024 · confidential</a>
+        <div class="conf-row">
+          <span class="pill conf title-bar" style="color:rgb(43, 23, 3);padding-left:10px;padding-right:10px"><span class="t-name">Meiji Almond and Macadamia Digital Experience</span><span class="t-year">2023/2024</span></span>
+          <span class="pill conf conf-right" style="background:#FFFFFF;color:#9E9E9E">confidential</span>
         </div>
         <div class="conf-row">
-          <span class="pill conf">Meiji Meltykiss USA</span>
-          <span class="pill conf conf-right">2025 · confidential</span>
-        </div>
-        <div class="conf-row viewable">
-          <span class="pill conf">Meiji – Almond / Macadamia</span>
-          <span class="pill conf conf-right">2024 · confidential</span>
+          <span class="pill conf title-bar" style="color:rgb(43, 23, 3);padding-left:10px;padding-right:10px"><span class="t-name">Meiji Meltykiss USA</span><span class="t-year">2023</span></span>
+          <span class="pill conf conf-right" style="background:#2B1703;color:#9E9E9E">archived</span>
         </div>
         <div class="conf-row">
-          <span class="pill conf">Earth Seiyaku / Pharmaceuticals Corporation · confidential</span>
-          <span class="pill conf conf-right">2024 · in progress</span>
-        </div>
-        <div class="conf-row viewable">
-          <a class="pill conf" style="text-decoration:none" href="accor-group.html">Accor Group</a>
-          <a class="pill conf conf-right" style="text-decoration:none;background:#fff" href="accor-group.html">2024 · confidential</a>
+          <span class="pill conf title-bar" style="color:rgb(43, 23, 3);padding-left:10px;padding-right:10px"><span class="t-name">Meiji – Almond / Macadamia</span><span class="t-year">2023</span></span>
+          <span class="pill conf conf-right" style="background:#E6E6E6;color:#BCBCBC">unavailable</span>
         </div>
         <div class="conf-row">
-          <span class="pill conf">ELAC · confidential</span>
-          <span class="pill conf conf-right">2023 · confidential</span>
+          <span class="pill conf title-bar" style="color:rgb(43, 23, 3);padding-left:10px;padding-right:10px"><span class="t-name">Earth Seiyaku Pharmaceuticals Corporation</span><span class="t-year">2024</span></span>
+          <span class="pill conf conf-right" style="background:#2B1703;color:#9E9E9E">archived</span>
         </div>
         <div class="conf-row">
-          <span class="pill conf">Dilmah Tea</span>
-          <span class="pill conf conf-right">— · confidential</span>
+          <span class="pill conf title-bar" style="color:rgb(43, 23, 3);padding-left:10px;padding-right:10px"><span class="t-name">Accor Group</span><span class="t-year">2023</span></span>
+          <span class="pill conf conf-right" style="background:#FFFFFF;color:#9E9E9E">coming soon</span>
+        </div>
+        <div class="conf-row">
+          <span class="pill conf title-bar" style="color:rgb(43, 23, 3);padding-left:10px;padding-right:10px"><span class="t-name">ELAC</span><span class="t-year">2024</span></span>
+          <span class="pill conf conf-right" style="background:#2B1703;color:#9E9E9E">archived</span>
+        </div>
+        <div class="conf-row">
+          <span class="pill conf title-bar" style="color:rgb(43, 23, 3);padding-left:10px;padding-right:10px"><span class="t-name">Dilmah Tea</span><span class="t-year">2024</span></span>
+          <span class="pill conf conf-right" style="background:#2B1703;color:#9E9E9E">archived</span>
         </div>
       </div>
 
@@ -1241,24 +1262,32 @@ body.ready .feed-entry { animation: none !important; opacity: 1 !important; tran
       <!-- [23] CocaCola Japan — confidential -->
       <div class="conf-group" data-cat="work" data-extra="1">
         <div class="conf-row">
-          <span class="pill conf">Sigmax – Zamst</span>
-          <span class="pill conf conf-right">2022 · confidential</span>
+          <span class="pill conf title-bar" style="color:rgb(43, 23, 3);padding-left:10px;padding-right:10px"><span class="t-name">Sigmax – Zamst</span><span class="t-year">2022</span></span>
+          <span class="pill conf conf-right" style="background:#2B1703;color:#9E9E9E">archived</span>
         </div>
-        <div class="conf-row viewable">
-          <a class="pill conf" style="text-decoration:none" href="qr-de-kessai.html">CocaCola Japan</a>
-          <a class="pill conf conf-right" style="text-decoration:none;background:#fff" href="qr-de-kessai.html">2022 · confidential</a>
+        <div class="conf-row">
+          <span class="pill conf title-bar" style="color:rgb(43, 23, 3);padding-left:10px;padding-right:10px"><span class="t-name">QRで決済 Coca-Cola Japan</span><span class="t-year">2022</span></span>
+          <span class="pill conf conf-right" style="background:#FFFFFF;color:#9E9E9E">confidential</span>
+        </div>
+      </div>
+
+      <!-- Rocketbike Digital Agency -->
+      <div class="conf-group" data-cat="work" data-extra="1">
+        <div class="conf-row">
+          <span class="pill conf title-bar" style="color:rgb(43, 23, 3);padding-left:10px;padding-right:10px"><span class="t-name">rocketbike Digital Agency</span><span class="t-year">2021</span></span>
+          <span class="pill conf conf-right" style="background:#2B1703;color:#9E9E9E">archived</span>
         </div>
       </div>
 
       <!-- [24] Field Management -->
       <div class="feed-entry" data-cat="work" data-extra="1" style="animation-delay:80ms">
         <div class="tag-row work">
-          <span class="pill title-bar no-hover">
+          <span class="pill title-bar no-hover" style="color:#E6E6E6">
             <span class="t-name">Field Management</span>
-            <span class="t-year">2024 ( in progress )</span>
+            <span class="t-year">2021</span>
           </span>
-          <a class="pill cta" href="#">
-            <span>tap / investigate</span>
+          <a class="pill cta" href="https://dribbble.com/shots/12015831-Field-Management-Identity" target="_blank" style="background:#FFFFFF;color:#9E9E9E">
+            <span>external link</span>
             <span class="arrow">→</span>
             <span class="circle">●</span>
           </a>
@@ -1614,12 +1643,73 @@ body.ready .feed-entry { animation: none !important; opacity: 1 !important; tran
   }
   items.forEach(function (el) { el.dataset.ptype = typeOf(el); });
 
+  /* ---- Confidential status sort (applied only while filtered) ------
+     Record each conf-row's home group + sibling so the authored
+     grouped layout restores exactly when leaving the filter. While
+     sorted, rows fade/slide in one after another for a gooey feel. */
+  var confGroups = Array.prototype.slice.call(feed.querySelectorAll('.conf-group'));
+  var confHome = [];
+  confGroups.forEach(function (g) {
+    Array.prototype.forEach.call(g.querySelectorAll('.conf-row'), function (r) {
+      confHome.push({ row: r, group: g, next: r.nextElementSibling });
+    });
+  });
+  var confSorted = false;
+  function statusRank(row) {
+    var rank = { 'confidential': 0, 'coming soon': 1, 'unavailable': 2, 'archived': 3 };
+    var badge = row.querySelector('.pill.conf-right');
+    var txt = badge ? badge.textContent.trim().toLowerCase() : '';
+    return (txt in rank) ? rank[txt] : 99;
+  }
+  function applyConfSort() {
+    if (confSorted || confGroups.length < 1) return;
+    var ordered = confHome
+      .map(function (h, i) { return { r: h.row, k: statusRank(h.row), i: i }; })
+      .sort(function (a, b) { return a.k - b.k || a.i - b.i; });
+    ordered.forEach(function (o) { confGroups[0].appendChild(o.r); });
+    if (!reduce) {
+      var STEP = 55, MAX = 18; /* cap the cascade so long lists don't drag */
+      ordered.forEach(function (o, idx) {
+        var row = o.r;
+        row.classList.remove('conf-pop');
+        void row.offsetWidth; /* restart the animation cleanly on rapid re-clicks */
+        row.style.setProperty('--pop-delay', (Math.min(idx, MAX) * STEP) + 'ms');
+        row.classList.add('conf-pop');
+        row.addEventListener('animationend', function onEnd() {
+          row.removeEventListener('animationend', onEnd);
+          row.classList.remove('conf-pop');
+          row.style.removeProperty('--pop-delay');
+        });
+      });
+    }
+    confSorted = true;
+  }
+  function restoreConfOrder() {
+    if (!confSorted) return;
+    confHome.forEach(function (h) {
+      h.row.classList.remove('conf-pop');
+      h.row.style.removeProperty('--pop-delay');
+      if (h.next && h.next.parentNode === h.group) {
+        h.group.insertBefore(h.row, h.next);
+      } else {
+        h.group.appendChild(h.row);
+      }
+    });
+    confSorted = false;
+  }
+
   /* Placeholder selection of confidential rows that become viewable
      (reveal a KV frame) after unlock. The rest stay locked/ghosted. */
-  var VIEWABLE = { 'Meiji Meltykiss USA': 1, 'CocaCola Japan': 1, '109 Cinemas': 1 };
+  var VIEWABLE = {
+    'Puma – H-STREET Activation': 1,
+    'Bandai Gundam – 米国': 1,
+    'Meiji Almond and Macadamia Digital Experience': 1,
+    'QRで決済 Coca-Cola Japan': 1
+  };
   feed.querySelectorAll('.conf-row').forEach(function (row) {
     var left = row.querySelector('.pill.conf');
-    var name = left ? left.textContent.trim() : '';
+    var nameEl = left ? left.querySelector('.t-name') : null;
+    var name = nameEl ? nameEl.textContent.trim() : (left ? left.textContent.trim() : '');
     if (VIEWABLE[name]) row.classList.add('viewable');
   });
 
@@ -1698,12 +1788,13 @@ body.ready .feed-entry { animation: none !important; opacity: 1 !important; tran
     feed.classList.toggle('lane', next === 'confidential' && !unlocked);
     carousel.classList.toggle('open', next === 'previousIdentity');
     if (next === 'previousIdentity') { buildCarousel(); requestAnimationFrame(layout); }
+    if (next === 'confidential') { applyConfSort(); } else { restoreConfOrder(); }
     reorder(orderFor(next));
   }
 
   /* ---- Password gate (soft, client-side) -------------------------- */
   function submitPw() {
-    if (pwInput.value === 'benjamin2024') {
+    if (pwInput.value === 'superfuture3018') {
       unlocked = true;
       feed.classList.remove('lane');
       feed.classList.add('unlocked');
