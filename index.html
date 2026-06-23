@@ -172,7 +172,7 @@ button { font: inherit; color: inherit; background: none; border: none; cursor: 
 /* The universe is the rotatable container. preserve-3d keeps children in 3D. */
 .universe {
   position: absolute;
-  top: 50%;
+  top: var(--universe-y, 50%);
   left: var(--universe-x, 50%);
   width: 0; height: 0;
   transform-style: preserve-3d;
@@ -180,7 +180,7 @@ button { font: inherit; color: inherit; background: none; border: none; cursor: 
      children in 3D each frame as the parent rotates */
   will-change: transform, left;
   transform: translate(-50%, -50%) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg));
-  transition: transform 240ms var(--ease-spatial), left 700ms var(--ease-morph);
+  transition: transform 240ms var(--ease-spatial), left 700ms var(--ease-morph), top 700ms var(--ease-morph);
 }
 .universe.is-dragging { transition: left 700ms var(--ease-morph); }
 .universe.is-resting  { transition: transform 1400ms var(--ease-spatial), left 700ms var(--ease-morph); }
@@ -356,7 +356,7 @@ button { font: inherit; color: inherit; background: none; border: none; cursor: 
     /* bottom inner shade — gives roundness */
     inset 0 -2px 3px rgba(43,23,3,0.05);
 
-  opacity: var(--depth-opacity, 1);
+  opacity: calc(var(--depth-opacity, 1) * var(--exit-op, 1));
   filter: blur(var(--depth-blur, 0px));
   backface-visibility: hidden;
 
@@ -405,7 +405,7 @@ button { font: inherit; color: inherit; background: none; border: none; cursor: 
   pointer-events: none;
   transform: translate3d(0,0,0);
   transform-style: preserve-3d;
-  opacity: var(--depth-opacity, 1);
+  opacity: calc(var(--depth-opacity, 1) * var(--exit-op, 1));
 }
 /* Thin connector lines from the anchor (origin) to each pill.
    Each line lives inside the universe so it rotates with the whole sphere.
@@ -517,7 +517,9 @@ button { font: inherit; color: inherit; background: none; border: none; cursor: 
   flex-direction: column;
   gap: 1px;
   z-index: 5;
+  transition: opacity 500ms var(--ease-spatial);
 }
+.zoomctl.is-hidden { opacity: 0; pointer-events: none; }
 .zoomctl button {
   width: 30px;
   height: 30px;
@@ -1017,6 +1019,60 @@ button { font: inherit; color: inherit; background: none; border: none; cursor: 
   .cvp-proj .pthumb { width: 72px; height: 72px; flex-basis: 72px; }
   .cvp-logos { padding: 12px 12px; gap: 7px; }
   .cvp-logos .logo-cell { height: 16px; }
+}
+
+/* =========================================================
+   MOBILE BOTTOM SHEET — phones (≤ 600px)
+   On narrow screens the cardstack becomes a bottom sheet so
+   the node universe stays visible in the top half.
+   ========================================================= */
+@media (max-width: 600px) {
+  /* Full-height transparent scroll layer — content starts in the bottom 52vh
+     via top padding. Scrolling up lets cards travel freely into the universe area.
+     Scrolling back down returns them to the starting position. */
+  .cardstack {
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    width: 100%;
+    max-width: 100%;
+    height: 100%;
+    max-height: none;
+    background: transparent;
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+    box-shadow: none;
+    border-radius: 0;
+    padding: 48vh 16px 40px;
+    gap: 10px;
+    overflow-y: auto;
+    overflow-x: hidden;
+  }
+  .cardstack.is-wide { width: 100%; max-width: 100%; }
+
+  /* Universe stays centred, lifts slightly so rock sits clearly above cards */
+  .universe.is-shifted {
+    --universe-x: 50%;
+    --universe-y: 34%;
+  }
+
+  /* Close button stays fixed — cards scroll underneath it */
+  .stack-close {
+    top: auto;
+    bottom: calc(52vh + 8px);
+    right: 16px;
+  }
+
+  /* iPod: content starts near the top, just below nav */
+  .cardstack.is-fullscreen {
+    padding-top: 72px;
+  }
+  .cardstack.is-fullscreen ~ .stack-close,
+  .cardstack.is-fullscreen + .stack-close {
+    bottom: auto;
+    top: 160px;
+  }
 }
 /* =========================================================
    ABOUT-ME PANEL — rich layout matching the reference design
@@ -1952,7 +2008,7 @@ a.cvp-proj:hover { background: #f0ecec; }
     <!-- Floating label that shows full text of nearest pill -->
     <div class="focuslabel" id="focuslabel"></div>
 
-    <div class="hud" id="hud">
+    <div class="hud is-hidden" id="hud">
       <span>drag to orbit</span>
       <span>·</span>
       <span>scroll to zoom</span>
@@ -1960,7 +2016,7 @@ a.cvp-proj:hover { background: #f0ecec; }
       <span>click a pill</span>
     </div>
 
-    <div class="zoomctl">
+    <div class="zoomctl is-hidden" id="zoomctl">
       <button id="zoomIn"  aria-label="zoom in">+</button>
       <button id="zoomOut" aria-label="zoom out">−</button>
     </div>
@@ -2067,15 +2123,21 @@ a.cvp-proj:hover { background: #f0ecec; }
   const zoomInBtn  = document.getElementById('zoomIn');
   const zoomOutBtn = document.getElementById('zoomOut');
 
+  const zoomctl    = document.getElementById('zoomctl');
+
   // State
   let rx = -8;  // pitch (deg)
   let ry =  20; // yaw (deg)
   let rxTarget = rx;
   let ryTarget = ry;
-  let SPHERE_R = 360; // radius of the sphere in px
-  let SPHERE_R_TARGET = SPHERE_R;
+  let SPHERE_R = 360; // sphere stays at full radius always — pills hidden via --exit-op, not scale
+  let SPHERE_R_TARGET = 360;
   const SPHERE_R_MIN = 200;
   const SPHERE_R_MAX = 720;
+
+  // Universe open/close state
+  let universeOpen    = false;
+  let closingUniverse = false;
 
   // Build the pills.
   // We arrange the 13 nodes on a Fibonacci sphere (more even than lat/long
@@ -2106,6 +2168,7 @@ a.cvp-proj:hover { background: #f0ecec; }
       thread.className = 'thread';
       thread.innerHTML = '<div class="line"></div>';
       orientThread(thread, p);
+      thread.style.setProperty('--exit-op', '0'); // hidden until universe opens
       universe.appendChild(thread);
 
       // --- Pill ---
@@ -2116,6 +2179,8 @@ a.cvp-proj:hover { background: #f0ecec; }
       el.style.setProperty('--x', p.x + 'px');
       el.style.setProperty('--y', p.y + 'px');
       el.style.setProperty('--z', p.z + 'px');
+      el.style.setProperty('--exit-op', '0'); // hidden until universe opens
+      el.style.pointerEvents = 'none';        // non-interactive until universe opens
       universe.appendChild(el);
 
       const face = el.querySelector('.face');
@@ -2243,7 +2308,7 @@ a.cvp-proj:hover { background: #f0ecec; }
     // Idle drift — slow rotation around Y axis if user has been still.
     // Calm it to a near-still crawl while content cards are open so it doesn't distract.
     idleTimer += dt;
-    if (idleTimer > IDLE_THRESHOLD && !dragging) {
+    if (idleTimer > IDLE_THRESHOLD && !dragging && universeOpen && !closingUniverse) {
       const driftRate = cardsOpen ? 0.0012 : 0.004;
       driftRy += dt * driftRate;
       ryTarget += dt * driftRate;
@@ -2267,8 +2332,9 @@ a.cvp-proj:hover { background: #f0ecec; }
   let downX = 0, downY = 0, didMove = false;
 
   stage.addEventListener('mousedown', e => {
-    // Don't start a drag if user clicked a pill
+    // Don't start a drag if user clicked a pill, or universe is dormant/closing
     if (e.target.closest('.pill')) return;
+    if (!universeOpen || closingUniverse) return;
     dragging = true;
     didMove = false;
     downX = e.clientX; downY = e.clientY;
@@ -2311,6 +2377,7 @@ a.cvp-proj:hover { background: #f0ecec; }
   stage.addEventListener('touchstart', e => {
     if (e.target.closest('.pill')) return;
     if (e.touches.length !== 1) return;
+    if (!universeOpen || closingUniverse) return;
     dragging = true;
     lastClientX = e.touches[0].clientX;
     lastClientY = e.touches[0].clientY;
@@ -2340,6 +2407,7 @@ a.cvp-proj:hover { background: #f0ecec; }
   // --- Scroll to zoom (no Cmd required since this is a 3D scene, not a 2D canvas) ---
   stage.addEventListener('wheel', e => {
     e.preventDefault();
+    if (!universeOpen || closingUniverse) return;
     // Normalize wheel delta — trackpads send small values, mice send ~100
     const d = Math.max(-50, Math.min(50, e.deltaY));
     const factor = Math.exp(d * 0.0025);
@@ -2348,10 +2416,12 @@ a.cvp-proj:hover { background: #f0ecec; }
   }, { passive: false });
 
   zoomInBtn.addEventListener('click', () => {
+    if (!universeOpen) return;
     SPHERE_R_TARGET = Math.min(SPHERE_R_MAX, SPHERE_R_TARGET * 1.18);
     idleTimer = 0;
   });
   zoomOutBtn.addEventListener('click', () => {
+    if (!universeOpen) return;
     SPHERE_R_TARGET = Math.max(SPHERE_R_MIN, SPHERE_R_TARGET / 1.18);
     idleTimer = 0;
   });
@@ -2549,7 +2619,9 @@ a.cvp-proj:hover { background: #f0ecec; }
     opts = opts || {};
     cardstack.innerHTML = contentHTML;
     cardstack.classList.toggle('is-wide', !!opts.wide);
+    cardstack.classList.toggle('is-fullscreen', !!opts.fullscreen);
     cardstack.style.display = '';
+    cardstack.scrollTop = 0; // always start at the top of the card zone
     stackClose.classList.add('is-visible');
     sideOpen = true;
     // calm the idle drift slightly while reading
@@ -2572,6 +2644,7 @@ a.cvp-proj:hover { background: #f0ecec; }
     stackClose.classList.remove('is-visible');
     sideOpen = false;
     cardsOpen = false;
+    cardstack.classList.remove('is-fullscreen');
     // slide the constellation back to center
     universe.classList.remove('is-shifted');
     setTimeout(() => {
@@ -2588,7 +2661,7 @@ a.cvp-proj:hover { background: #f0ecec; }
     closeOverlay();
     if (!ipodInstance) ipodInstance = buildIPod();
     // Mount the iPod's root element inside the floating card stack.
-    openSide('listen', '', { wide: true });
+    openSide('listen', '', { wide: true, fullscreen: true });
     // The ipod root is a bare .ipod element wrapped for the panel.
     const wrap = document.createElement('div');
     wrap.className = 'ipod-panel-wrap';
@@ -3155,8 +3228,133 @@ a.cvp-proj:hover { background: #f0ecec; }
   updateDepth();
   rafId = requestAnimationFrame(tick);
 
-  // Center "benjamin" anchor → opens the rich about-me panel.
-  // Uses a small movement threshold so orbiting (drag) doesn't trigger it.
+  // ---------------------------------------------------------------
+  // UNIVERSE OPEN / CLOSE — rock is the toggle
+  // ---------------------------------------------------------------
+
+  function openUniverse() {
+    universeOpen = true;
+    universe.classList.add('is-universe-open');
+
+    // Sort back-to-front so far pills emerge first, near ones arrive last
+    const rxRad = rx * Math.PI / 180;
+    const ryRad = ry * Math.PI / 180;
+    const cosX = Math.cos(rxRad), sinX = Math.sin(rxRad);
+    const cosY = Math.cos(ryRad), sinY = Math.sin(ryRad);
+    const sorted = pills.map(p => {
+      const { x, y, z } = p.basePos;
+      const x1 =  cosY * x + sinY * z;
+      const z1 = -sinY * x + cosY * z;
+      const z2 =  sinX * y + cosX * z1;
+      return { pill: p, worldZ: z2 };
+    }).sort((a, b) => a.worldZ - b.worldZ); // back first for entrance
+
+    const RISE       = 40;   // px — pills settle down from slightly above
+    const ENTER_DUR  = 480;
+    const STAGGER    = 42;
+    const FADE_DUR   = 360;
+
+    sorted.forEach(({ pill }, i) => {
+      pill.el.style.pointerEvents = '';
+      setTimeout(() => {
+        const t0 = performance.now();
+        const destY = pill.basePos.y;
+        function enterFrame(now) {
+          const prog = Math.min(1, (now - t0) / ENTER_DUR);
+          const eased = 1 - Math.pow(1 - prog, 3); // ease-out cubic
+          pill.el.style.setProperty('--y', (destY - RISE * (1 - eased)).toFixed(1) + 'px');
+          pill.el.style.setProperty('--exit-op', Math.min(1, (now - t0) / FADE_DUR).toFixed(3));
+          pill.thread.style.setProperty('--exit-op', Math.min(1, (now - t0) / FADE_DUR).toFixed(3));
+          if (prog < 1) requestAnimationFrame(enterFrame);
+        }
+        requestAnimationFrame(enterFrame);
+      }, i * STAGGER);
+    });
+
+    // Show HUD briefly, then tuck away
+    hud.classList.remove('is-hidden');
+    setTimeout(() => hud.classList.add('is-hidden'), 4500);
+    // Show zoom controls
+    zoomctl.classList.remove('is-hidden');
+    idleTimer = 0;
+  }
+
+  function collapseUniverse() {
+    if (closingUniverse) return;
+    closingUniverse = true;
+
+    // Close any open content first
+    collapseChildren();
+    if (sideOpen) closeSide();
+    closeOverlay();
+    pills.forEach(p => {
+      p.el.classList.remove('is-active');
+      p.el.style.pointerEvents = 'none';
+    });
+
+    // Signal Three.js rock to return to dormant glow
+    universe.classList.remove('is-universe-open');
+
+    // Hide UI controls immediately
+    hud.classList.add('is-hidden');
+    zoomctl.classList.add('is-hidden');
+
+    // --- Gravity drift ---
+    // Sort front-to-back — nearest pills fall first
+    const rxRad = rx * Math.PI / 180;
+    const ryRad = ry * Math.PI / 180;
+    const cosX = Math.cos(rxRad), sinX = Math.sin(rxRad);
+    const cosY = Math.cos(ryRad), sinY = Math.sin(ryRad);
+
+    const sorted = pills.map(p => {
+      const { x, y, z } = p.basePos;
+      const x1 =  cosY * x + sinY * z;
+      const z1 = -sinY * x + cosY * z;
+      const z2 =  sinX * y + cosX * z1;
+      return { pill: p, worldZ: z2 };
+    }).sort((a, b) => b.worldZ - a.worldZ); // front first
+
+    const DRIFT_Y    = 130;
+    const DRIFT_DUR  = 520;
+    const STAGGER    = 38;
+    const FADE_AFTER = 80;
+    const FADE_DUR   = 340;
+
+    const totalTime = STAGGER * (sorted.length - 1) + DRIFT_DUR;
+
+    sorted.forEach(({ pill }, i) => {
+      setTimeout(() => {
+        const t0 = performance.now();
+        const startY = pill.basePos.y;
+        function driftFrame(now) {
+          const prog = Math.min(1, (now - t0) / DRIFT_DUR);
+          const eased = prog * prog; // ease-in: gravity acceleration
+          pill.el.style.setProperty('--y', (startY + eased * DRIFT_Y).toFixed(1) + 'px');
+          const fadeT = Math.max(0, (now - t0 - FADE_AFTER) / FADE_DUR);
+          const op = Math.max(0, 1 - fadeT).toFixed(3);
+          pill.el.style.setProperty('--exit-op', op);
+          pill.thread.style.setProperty('--exit-op', op);
+          if (prog < 1) requestAnimationFrame(driftFrame);
+        }
+        requestAnimationFrame(driftFrame);
+      }, i * STAGGER);
+    });
+
+    // After all pills have exited, reset positions and state
+    setTimeout(() => {
+      pills.forEach(p => {
+        p.el.style.setProperty('--y', p.basePos.y.toFixed(1) + 'px');
+        p.el.style.setProperty('--exit-op', '0');
+        p.thread.style.setProperty('--exit-op', '0');
+      });
+      universeOpen    = false;
+      closingUniverse = false;
+      idleTimer       = 0;
+    }, totalTime + 150);
+  }
+
+  // Rock click → toggle universe open / close.
+  // Uses a small movement threshold so orbiting (drag) doesn't fire it.
   const anchorEl = universe.querySelector('.anchor');
   if (anchorEl) {
     let aDownX = 0, aDownY = 0, aMoved = false;
@@ -3167,19 +3365,17 @@ a.cvp-proj:hover { background: #f0ecec; }
       if (Math.abs(e.clientX - aDownX) > 4 || Math.abs(e.clientY - aDownY) > 4) aMoved = true;
     });
     anchorEl.addEventListener('click', e => {
-      if (aMoved) return;            // it was a drag-to-orbit, not a click
+      if (aMoved) return; // was a drag, not a click
       e.stopPropagation();
-      pills.forEach(pp => pp.el.classList.remove('is-active'));
-      collapseChildren();
-      closeOverlay();
-      openBenjaminPanel();
+      if (closingUniverse) return; // ignore during exit animation
+      if (!universeOpen) openUniverse();
+      else collapseUniverse();
     });
   }
 
-  // Hide the HUD after a few seconds so it doesn't compete with the scene
-  setTimeout(() => hud.classList.add('is-hidden'), 5000);
-  // Show again on hover near the bottom
+  // HUD re-appears on hover near bottom — only when universe is open
   stage.addEventListener('mousemove', e => {
+    if (!universeOpen || closingUniverse) return;
     const r = stage.getBoundingClientRect();
     if (e.clientY > r.top + r.height - 80) hud.classList.remove('is-hidden');
   });
@@ -4243,7 +4439,7 @@ a.cvp-proj:hover { background: #f0ecec; }
     anchorEl.addEventListener('mouseenter', function(){ hoverT=1; });
     anchorEl.addEventListener('mouseleave', function(){ hoverT=0; });
     new MutationObserver(function(){
-      var open = universeEl.classList.contains('is-shifted');
+      var open = universeEl.classList.contains('is-universe-open');
       activeT = open ? 1 : 0; anchorEl.classList.toggle('is-active', open);
     }).observe(universeEl, { attributes:true, attributeFilter:['class'] });
 
@@ -4264,6 +4460,16 @@ a.cvp-proj:hover { background: #f0ecec; }
     // ---- load the rock, then start ----------------------------------------
     var rockMats = [], started = false, spin = 0, last = performance.now(), running = true, DEG = Math.PI/180;
     function lerp(a,b,t){ return a+(b-a)*t; }
+
+    // ---- cursor awareness — dormant rock leans gently toward the cursor ----
+    var cxT = 0, cyT = 0, cx = 0, cy = 0; // target and eased angles (degrees)
+    var MAX_CX = 10, MAX_CY = 14;          // max lean in each axis
+    document.addEventListener('mousemove', function(e) {
+      cyT = ((e.clientX / window.innerWidth)  - 0.5) * 2 * MAX_CY;
+      cxT = -((e.clientY / window.innerHeight) - 0.5) * 2 * MAX_CX;
+    });
+    // drift back to neutral when cursor leaves the window
+    document.addEventListener('mouseleave', function() { cxT = 0; cyT = 0; });
 
     new THREE.GLTFLoader().load('./rock.glb', function (gltf) {
       var rock = gltf.scene;
@@ -4308,12 +4514,17 @@ a.cvp-proj:hover { background: #f0ecec; }
       // billboard the plane so it never goes edge-on / disappears
       anchorEl.style.transform = 'translate(-50%, -50%) rotateY(' + (-a.ry).toFixed(2) + 'deg) rotateX(' + (-a.rx).toFixed(2) + 'deg)';
 
-      // feed the universe rotation into the rock (true 3D orbit); ease toward a
-      // calm settle when a panel is open (active)
+      // ease cursor angles — languid, ~1.5s to fully track (makes it feel aware, not mechanical)
+      var cLerp = 1 - Math.pow(0.08, dt);
+      cx = lerp(cx, cxT, cLerp);
+      cy = lerp(cy, cyT, cLerp);
+
+      // feed the universe rotation into the rock (true 3D orbit); cursor awareness
+      // is layered on top and fades out with couple so it disappears when universe opens
       var couple = 1 - active;
       uni.rotation.set(0,0,0);
-      uni.rotateX(a.rx*DEG*couple);
-      uni.rotateY(a.ry*DEG*couple);
+      uni.rotateX((a.rx + cx) * DEG * couple);
+      uni.rotateY((a.ry + cy) * DEG * couple);
 
       spin += dt * 0.3 * couple;                  // gentle idle turntable (jagged form makes it read)
       obj.rotation.set(BASE_TILT, spin, 0);
