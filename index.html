@@ -185,7 +185,7 @@ button { font: inherit; color: inherit; background: none; border: none; cursor: 
 .universe.is-dragging { transition: left 700ms var(--ease-morph); }
 .universe.is-resting  { transition: transform 1400ms var(--ease-spatial), left 700ms var(--ease-morph); }
 /* When content cards open, slide the constellation left so it sits beside them */
-.universe.is-shifted { --universe-x: 31%; }
+.universe.is-shifted { --universe-x: 40%; }
 
 /* The center anchor — the user's avatar / "you are here" */
 .anchor {
@@ -1979,6 +1979,70 @@ a.cvp-proj:hover { background: #f0ecec; }
   color: rgba(43,23,3,0.6); background: rgba(183,255,0,0.22);
   border-radius: 10px; padding: 3px 10px; margin-bottom: 12px;
 }
+
+/* =========================================================
+   AUDIO TOGGLE — bottom-left frosted pill
+   ========================================================= */
+/* =========================================================
+   SOUND TOGGLE — text control, sits left of zoom buttons
+   zoomctl: right:22px, 30px wide → we sit at right:62px
+   vertically centred with the 61px-tall button stack
+   ========================================================= */
+#soundToggle {
+  position: absolute;
+  bottom: 46px;
+  right: 62px;
+  z-index: 5;
+  background: none;
+  border: none;
+  padding: 4px 0;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-family: inherit;
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+  white-space: nowrap;
+  user-select: none;
+  transition: color 300ms var(--ease-1), letter-spacing 350ms var(--ease-1);
+}
+#soundToggle:hover {
+  color: var(--ink-soft);
+  letter-spacing: 0.22em;
+}
+#soundToggle.is-on { color: var(--ink-soft); }
+#soundToggle.is-on:hover { color: var(--ink); letter-spacing: 0.22em; }
+#soundToggle .st-dot {
+  font-size: 8px;
+  display: inline-block;
+  transition: transform 400ms var(--ease-spatial);
+}
+#soundToggle.is-on .st-dot { transform: scale(1.2); }
+
+/* =========================================================
+   AUDIO HINT — follows mouse for 2.5s on load
+   ========================================================= */
+#audioHint {
+  position: fixed;
+  top: 0; left: 0;
+  pointer-events: none;
+  z-index: 99;
+  font-family: inherit;
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  color: #fff;
+  background: rgb(43,23,3);
+  white-space: nowrap;
+  padding: 7px 14px;
+  border-radius: 20px;
+  opacity: 0;
+  transition: opacity 500ms var(--ease-1);
+}
 </style>
 </head>
 
@@ -2021,10 +2085,20 @@ a.cvp-proj:hover { background: #f0ecec; }
       <button id="zoomOut" aria-label="zoom out">−</button>
     </div>
 
+    <!-- Sound toggle — left of zoom controls -->
+    <button id="soundToggle" aria-label="Toggle sound">
+      <span class="st-label">SOUND</span>
+      <span class="st-dot">⚪︎</span>
+      <span class="st-state">OFF</span>
+    </button>
+
     <!-- Floating content cards overlay the scene (no reflow) -->
     <div class="cardstack" id="cardstack" style="display:none;"></div>
     <button class="stack-close" id="stackClose" aria-label="close">×</button>
   </div>
+
+  <!-- Mouse-following audio prompt — 2.5s then removed -->
+  <div id="audioHint" aria-hidden="true">click anywhere to enable audio</div>
 </div>
 
 <!-- OVERLAY ARTIFACT — Space Invaders (ported from about_14.html) -->
@@ -4552,6 +4626,151 @@ a.cvp-proj:hover { background: #f0ecec; }
 
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
   else init();
+})();
+</script>
+
+<!-- Ambient audio — same folder as index.html -->
+<audio id="bgAudio" loop preload="none">
+  <source src="ambient.mp3" type="audio/mpeg" />
+</audio>
+
+<script>
+/* ============================================================
+   AMBIENT AUDIO — muted autoplay on load, unmutes into fade.
+   SOUND toggle updates live. Mouse hint for 2.5s on arrival.
+   Ducks automatically when iPod or any other audio plays.
+   ============================================================ */
+(function initAudio() {
+  var soundToggle = document.getElementById('soundToggle');
+  var audio       = document.getElementById('bgAudio');
+  if (!soundToggle || !audio) return;
+
+  var stDot   = soundToggle.querySelector('.st-dot');
+  var stState = soundToggle.querySelector('.st-state');
+
+  var TARGET_VOL = 0.38;
+  var fadeIv     = null;
+  var started    = false;
+
+  function clearFade() {
+    if (fadeIv) { clearInterval(fadeIv); fadeIv = null; }
+  }
+
+  function fadeIn(duration) {
+    clearFade();
+    audio.volume = 0;
+    var steps   = 60;
+    var stepMs  = duration / steps;
+    var stepVol = TARGET_VOL / steps;
+    fadeIv = setInterval(function() {
+      var next = audio.volume + stepVol;
+      if (next >= TARGET_VOL) { audio.volume = TARGET_VOL; clearFade(); }
+      else                    { audio.volume = next; }
+    }, stepMs);
+  }
+
+  function fadeOut(duration, cb) {
+    clearFade();
+    var start   = audio.volume;
+    var steps   = 40;
+    var stepMs  = duration / steps;
+    var stepVol = Math.max(start, 0.001) / steps;
+    fadeIv = setInterval(function() {
+      var next = audio.volume - stepVol;
+      if (next <= 0) { audio.volume = 0; clearFade(); cb && cb(); }
+      else           { audio.volume = next; }
+    }, stepMs);
+  }
+
+  function setPlaying(on) {
+    soundToggle.classList.toggle('is-on', on);
+    stDot.textContent   = on ? '◉' : '⚪︎';
+    stState.textContent = on ? 'ON' : 'OFF';
+  }
+
+  /* ── Muted autoplay — browsers always allow muted start ─── */
+  function startAmbient() {
+    if (started) return;
+    started = true;
+    audio.muted  = true;
+    audio.volume = 0;
+    audio.play().then(function() {
+      audio.muted = false;
+      setPlaying(true);
+      fadeIn(3500);
+    }).catch(function() {
+      started = false;
+    });
+  }
+
+  window.addEventListener('load', startAmbient);
+
+  /* Fallback: first interaction (mobile / strict browsers) */
+  function onFirstTouch(e) {
+    document.removeEventListener('click',      onFirstTouch, true);
+    document.removeEventListener('touchstart', onFirstTouch, true);
+    document.removeEventListener('keydown',    onFirstTouch, true);
+    if (soundToggle.contains(e.target)) return;
+    startAmbient();
+  }
+  document.addEventListener('click',      onFirstTouch, true);
+  document.addEventListener('touchstart', onFirstTouch, true);
+  document.addEventListener('keydown',    onFirstTouch, true);
+
+  /* ── SOUND toggle ────────────────────────────────────────── */
+  soundToggle.addEventListener('click', function(e) {
+    e.stopPropagation();
+    if (audio.paused) {
+      audio.play().then(function() {
+        setPlaying(true);
+        fadeIn(2500);
+      }).catch(function() {});
+    } else {
+      fadeOut(1800, function() {
+        audio.pause();
+        setPlaying(false);
+      });
+    }
+  });
+
+  /* ── Duck when iPod or any other audio plays ─────────────── */
+  document.addEventListener('play', function(e) {
+    if (e.target !== audio && !audio.paused) {
+      fadeOut(1200, function() { audio.pause(); setPlaying(false); });
+    }
+  }, true);
+
+  audio.addEventListener('ended', function() { setPlaying(false); });
+
+  /* ── Mouse-following hint — visible for 2.5s on arrival ─── */
+  (function() {
+    var hint = document.getElementById('audioHint');
+    if (!hint) return;
+    var alive = true;
+    var tx = window.innerWidth / 2;
+    var ty = window.innerHeight * 0.55;
+
+    hint.style.transform = 'translate(' + tx + 'px,' + ty + 'px)';
+    /* Small delay so hint appears after the page settles */
+    setTimeout(function() { hint.style.opacity = '1'; }, 300);
+
+    function onMove(e) {
+      if (!alive) return;
+      tx = e.clientX + 20;
+      ty = e.clientY + 16;
+      hint.style.transform = 'translate(' + tx + 'px,' + ty + 'px)';
+    }
+    document.addEventListener('mousemove', onMove);
+
+    setTimeout(function() {
+      alive = false;
+      hint.style.opacity = '0';
+      document.removeEventListener('mousemove', onMove);
+      setTimeout(function() {
+        if (hint.parentNode) hint.parentNode.removeChild(hint);
+      }, 600);
+    }, 3000);
+  })();
 })();
 </script>
 
