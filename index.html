@@ -1478,6 +1478,18 @@ a.cvp-proj:hover { background: #f0ecec; }
 }
 .cvp-contact a, .cvp-contact span { font-size: 13px; color: rgba(43,23,3,0.72); }
 .cvp-contact a:hover { color: var(--ink); }
+.cvp-cv-pill {
+  display: inline-flex; align-items: center; gap: 5px;
+  align-self: flex-start;
+  margin-top: 6px;
+  font-size: 12px; font-weight: 500;
+  padding: 7px 16px;
+  border-radius: 16px;
+  background: var(--pill-bg);
+  color: var(--ink) !important;
+  transition: background 160ms, color 160ms;
+}
+.cvp-cv-pill:hover { background: var(--ink); color: var(--bg) !important; }
 
 /* reserved area so a contact form can be dropped in later without a layout change */
 .cvp-contact-reserve {
@@ -2974,7 +2986,7 @@ a.cvp-proj:hover { background: #f0ecec; }
           <button class="ap-toggle" id="apToggle"><span id="apToggleLabel">Long</span><span class="chev">\u25BE</span></button>
         </div>
         <div class="ap-cv">
-          <a class="ap-cv-btn" href="#" download>Download CV</a>
+          <a class="ap-cv-btn" href="Benjamin_Lemar_CV.pdf" download="Benjamin_Lemar_CV.pdf">Download CV</a>
         </div>
         <div class="ap-logos">${logos}</div>
       </div>
@@ -3097,7 +3109,7 @@ a.cvp-proj:hover { background: #f0ecec; }
       <div class="cvp-work-card">${ABOUT.projects.map(p => cvProjCard(p, false)).join('')}</div>
       <div class="cvp-contact">
         <a href="https://instagram.com/benjaminlemar" target="_blank" rel="noopener">${ABOUT.contact.handle}</a>
-        <a href="mailto:${ABOUT.contact.email}">${ABOUT.contact.email}</a>
+        <a class="cvp-cv-pill" href="Benjamin_Lemar_CV.pdf" download="Benjamin_Lemar_CV.pdf">\u2192 download resume/cv</a>
       </div>
     `;
   }
@@ -3115,7 +3127,7 @@ a.cvp-proj:hover { background: #f0ecec; }
     return `<div class="cvp-tabbody">
       <div class="cvp-contact">
         <a href="https://instagram.com/benjaminlemar" target="_blank" rel="noopener">${ABOUT.contact.handle}</a>
-        <a href="mailto:${ABOUT.contact.email}">${ABOUT.contact.email}</a>
+        <a class="cvp-cv-pill" href="Benjamin_Lemar_CV.pdf" download="Benjamin_Lemar_CV.pdf">\u2192 download resume/cv</a>
       </div>
       <div class="cvp-contact-reserve">Contact form \u2014 coming soon</div>
     </div>`;
@@ -3489,7 +3501,7 @@ a.cvp-proj:hover { background: #f0ecec; }
             <button class="ap-toggle" id="apToggle"><span id="apToggleLabel">Long</span><span class="chev">▾</span></button>
           </div>
           <div class="ap-cv">
-            <a class="ap-cv-btn" href="#" download>Download CV</a>
+            <a class="ap-cv-btn" href="Benjamin_Lemar_CV.pdf" download="Benjamin_Lemar_CV.pdf">Download CV</a>
           </div>
           <div class="ap-logos">${ABOUT.clients.map(c => '<span class="logo">'+c+'</span>').join('')}</div>
         </div>
