@@ -768,6 +768,31 @@ body.show-extra-4 .conf-group[data-extra="4"] { display: flex; }
 .cs-meta-k { font-size:14px; font-weight:500; margin-bottom:7px; }
 .cs-meta-v { font-size:14px; line-height:1.5; color: var(--cs-muted); }
 
+/* ===== In 10 Seconds annotation component ===== */
+.cs-10s {
+  width: var(--cs-text);
+  margin-left: auto;
+  margin-bottom: 60px;
+  background: var(--pill-bg);
+  border-radius: 10px;
+  padding: 18px 22px 20px;
+}
+.cs-10s-label {
+  font-size: var(--fs);
+  font-weight: 500;
+  color: var(--text);
+  margin-bottom: 10px;
+}
+.cs-10s-body p {
+  font-size: var(--fs);
+  line-height: 1.55;
+  color: var(--cs-muted);
+}
+.cs-10s-body p + p { margin-top: 4px; }
+@media (max-width: 720px) {
+  .cs-10s { width: 100%; margin-left: 0; }
+}
+
 /* two-column editorial row: heading column (left) + text column (right) */
 .cs-row { display:grid; grid-template-columns: 1fr var(--cs-text); column-gap: 40px;
           align-items:start; margin: 0 0 150px 0; }
@@ -895,6 +920,16 @@ body.show-extra-4 .conf-group[data-extra="4"] { display: flex; }
     <div class="cs-meta">
       <div class="cs-meta-k">Prototype 41</div>
       <div class="cs-meta-v">A study in anticipatory spatial ergonomics.<br>One exploratory case within the broader KEIF framework.</div>
+    </div>
+
+    <!-- In 10 Seconds annotation -->
+    <div class="cs-10s">
+      <div class="cs-10s-label">In 10 Seconds</div>
+      <div class="cs-10s-body">
+        <p>Public infrastructure is static while human behavior is dynamic.</p>
+        <p>Explore whether shared environments can adapt to changing needs.</p>
+        <p>Increase utility, accessibility, and relevance over time.</p>
+      </div>
     </div>
 
     <div class="cs-row"><div class="cs-h"></div><div class="cs-b cs-lead"><p>Imagine sitting on a park bench when it begins to rain, and the bench responds, providing for you, simply because you are there. Imagine objects that don’t wait for you to touch them, that react simply because you’ve arrived.</p><p>That question is what Moving Bench is built on.</p></div></div>
