@@ -760,19 +760,32 @@ body.show-extra-4 .conf-group[data-extra="4"] { display: flex; }
 }
 
 /* ===================== CASE STUDY ===================== */
-:root { --cs-text: 42%; --cs-muted: rgba(43,23,3,0.58); }
+:root { --cs-muted: rgba(43,23,3,0.58); --cs-width: 680px; }
 .main-content.cs { padding-top: 80px; }
 
-.cs-title { font-size: 32px; font-weight:400; letter-spacing:-0.5px; line-height:1.08; }
-.cs-meta { margin: 200px 0 150px 0; max-width: 380px; }
-.cs-meta-k { font-size:14px; font-weight:500; margin-bottom:7px; }
-.cs-meta-v { font-size:14px; line-height:1.5; color: var(--cs-muted); }
+.cs-article { max-width: var(--cs-width); margin: 0 auto; }
+
+.cs-title { font-size: 32px; font-weight:400; letter-spacing:-0.5px; line-height:1.08; text-align:center; }
+.cs-meta { margin: 40px auto 32px; max-width: 100%; text-align:center; }
+.cs-meta-k { font-size:19px; font-weight:500; margin-bottom:12px; line-height:1.35; }
+.cs-meta-v { font-size:15px; line-height:1.6; color: var(--cs-muted); max-width:520px; margin:0 auto; }
+
+/* facts block */
+.cs-facts { display:grid; grid-template-columns: repeat(3,1fr); gap:18px; margin: 0 auto 40px; padding: 22px 0; border-top:1px solid rgba(43,23,3,0.12); border-bottom:1px solid rgba(43,23,3,0.12); }
+.cs-fact-label { font-size:11px; font-weight:600; letter-spacing:0.08em; text-transform:uppercase; color:var(--cs-muted); margin-bottom:6px; }
+.cs-fact-value { font-size:13.5px; line-height:1.5; }
+@media (max-width:720px){ .cs-facts { grid-template-columns: 1fr; gap:16px; } }
+
+/* headlines / stat cards */
+.cs-headlines { margin: 0 0 48px 0; }
+.cs-headlines-label { font-size: var(--fs); font-weight:500; color: var(--text); margin-bottom:14px; text-align:center; }
+.cs-stat-grid { display:grid; grid-template-columns: repeat(3,1fr); gap:10px; }
+@media (max-width:720px){ .cs-stat-grid{ grid-template-columns:1fr; } }
 
 /* ===== In 10 Seconds annotation component ===== */
 .cs-10s {
-  width: var(--cs-text);
-  margin-left: auto;
-  margin-bottom: 60px;
+  width: 100%;
+  margin-bottom: 40px;
   background: var(--pill-bg);
   border-radius: 10px;
   padding: 18px 22px 20px;
@@ -789,35 +802,36 @@ body.show-extra-4 .conf-group[data-extra="4"] { display: flex; }
   color: var(--cs-muted);
 }
 .cs-10s-body p + p { margin-top: 4px; }
-@media (max-width: 720px) {
-  .cs-10s { width: 100%; margin-left: 0; }
-}
 
-/* two-column editorial row: heading column (left) + text column (right) */
-.cs-row { display:grid; grid-template-columns: 1fr var(--cs-text); column-gap: 40px;
-          align-items:start; margin: 0 0 150px 0; }
-.cs-h { font-size:22px; font-weight:400; line-height:1.22; letter-spacing:-0.015em; }
-.cs-b p { font-size:clamp(18px, 2.1vw, 24px); line-height:1.56; margin-bottom: 18px; }
+/* single centered editorial row: heading stacks directly above body text */
+.cs-row { display:block; margin: 0 0 56px 0; padding-top: 48px;
+          border-top: 1px solid rgba(43,23,3,0.12); }
+.cs-row.cs-row-first { border-top:none; padding-top:0; }
+.cs-h:empty { display:none; margin:0; }
+.cs-eyebrow { display:block; font-size:11px; font-weight:600; letter-spacing:0.08em;
+              text-transform:uppercase; color: var(--cs-muted); margin-bottom:10px; }
+.cs-h { font-size:23px; font-weight:500; line-height:1.28; letter-spacing:-0.015em; margin-bottom:18px; }
+.cs-b p { font-size:17px; line-height:1.68; margin-bottom: 18px; }
 .cs-b p:last-child { margin-bottom:0; }
-.cs-b.cs-lead p { font-size:clamp(18px, 2.1vw, 24px); }
+.cs-b.cs-lead p { font-size:18px; }
 
-.cs-figure { margin: 0 0 130px 0; width:100%; }
-.cs-figure img { width:100%; display:block; height:auto; }
-.cs-figure video { width:100%; display:block; height:auto; }
-.cs-figure.cs-sm { max-width:70%; margin-left:auto; margin-right:auto; }
+.cs-figure { margin: 0 auto 48px; width:100%; max-width:74%; }
+.cs-figure img { width:100%; display:block; height:auto; border-radius:8px; }
+.cs-figure video { width:100%; display:block; height:auto; border-radius:8px; }
+.cs-figure.cs-sm { max-width:46%; margin-left:auto; margin-right:auto; }
 
-.cs-quote { text-align:center; font-size: clamp(22px,3.1vw,33px); font-weight:400;
-            color: rgba(43,23,3,0.5); line-height:1.26; letter-spacing:-0.3px;
-            margin: 8px auto 130px; max-width: 720px; }
+.cs-quote { text-align:center; font-size: clamp(22px,3.1vw,28px); font-weight:400;
+            color: rgba(43,23,3,0.5); line-height:1.3; letter-spacing:-0.3px;
+            margin: 8px auto 48px; max-width: 100%; }
 
-/* technical architecture: text column only */
-.cs-tech-lead { font-size:22px; line-height:1.3; letter-spacing:-0.015em; margin-bottom: 56px; }
+/* technical architecture */
+.cs-tech-lead { font-size:19px; line-height:1.4; letter-spacing:-0.015em; margin-bottom: 26px; }
 .cs-tech-lead b { font-weight:500; }
 .cs-tech-restate { font-size:14px; line-height:1.55; color: var(--cs-muted); margin-bottom: 26px; }
 .cs-cards { display:flex; flex-direction:column; gap: 10px; }
-.cs-card { background:#fbfbfa; padding: 22px 26px 26px; }
+.cs-card { background:#fbfbfa; padding: 20px 22px 22px; border-radius:10px; }
 .cs-card .num { display:block; font-size:20px; color: rgba(43,23,3,0.4);
-                font-feature-settings:'tnum'; margin-bottom: 34px; }
+                font-feature-settings:'tnum'; margin-bottom: 20px; }
 .cs-card h3 { font-size:13px; font-weight:600; margin-bottom:8px; }
 .cs-card p { font-size:12.5px; line-height:1.6; color: rgba(43,23,3,0.72); }
 .cs-card ul { list-style:none; margin: 14px 0 0; padding:0; }
@@ -826,11 +840,11 @@ body.show-extra-4 .conf-group[data-extra="4"] { display: flex; }
 .cs-card li:last-child { margin-bottom:0; }
 .cs-card li::before { content:'•'; position:absolute; left:0; color: rgba(43,23,3,0.4); }
 
-/* four-up concepts (full width) */
-.cs-concepts { display:grid; grid-template-columns: repeat(4,1fr); gap: var(--gap); margin: 0 0 90px 0; }
-.cs-concept .ph { aspect-ratio: 1/1; overflow:hidden; background:#ececec; }
+/* four-up concepts — 2-up fits the narrow column better */
+.cs-concepts { display:grid; grid-template-columns: repeat(2,1fr); gap: var(--gap); margin: 0 0 48px 0; }
+.cs-concept .ph { aspect-ratio: 1/1; overflow:hidden; background:#ececec; border-radius:6px; }
 .cs-concept .ph img { width:100%; height:100%; object-fit:cover; display:block; }
-.cs-concept h3 { font-size:12px; font-weight:600; margin: 13px 0 6px; }
+.cs-concept h3 { font-size:12.5px; font-weight:600; margin: 12px 0 6px; }
 .cs-concept p { font-size:11.5px; line-height:1.55; color: var(--cs-muted); }
 
 .cs-backbottom { text-align:center; margin: 40px 0 0; }
@@ -839,14 +853,14 @@ body.show-extra-4 .conf-group[data-extra="4"] { display: flex; }
 
 @media (max-width:720px) {
   .main-content.cs { padding-top: 66px; }
-  .cs-meta { margin: 70px 0 56px; }
-  .cs-row { grid-template-columns: 1fr; row-gap: 14px; margin-bottom: 84px; }
-  .cs-h { font-size:20px; }
-  .cs-figure { margin-bottom: 80px; }
-  .cs-figure.cs-sm { max-width:100%; }
-  .cs-tech-lead { font-size:20px; margin-bottom:36px; }
-  .cs-quote { margin: 6px auto 56px; }
-  .cs-concepts { grid-template-columns: repeat(2,1fr); gap: 26px var(--gap); }
+  .cs-article { max-width:100%; }
+  .cs-meta { margin: 40px 0 32px; }
+  .cs-h { font-size:19px; }
+  .cs-figure { max-width:100%; margin-bottom: 40px; }
+  .cs-figure.cs-sm { max-width:78%; }
+  .cs-tech-lead { font-size:18px; margin-bottom:20px; }
+  .cs-quote { margin: 6px auto 40px; }
+  .cs-concepts { grid-template-columns: 1fr; gap: 20px; }
 }
 
 /* ===== three-pill nav (canonical, matches index.html / practice.html) ===== */
@@ -914,12 +928,19 @@ body.show-extra-4 .conf-group[data-extra="4"] { display: flex; }
 
 <main class="main-content cs">
   <div class="container">
+  <div class="cs-article">
 
     <h1 class="cs-title">KEIF:Moving Bench</h1>
 
     <div class="cs-meta">
       <div class="cs-meta-k">Prototype 41</div>
-      <div class="cs-meta-v">A study in anticipatory spatial ergonomics.<br>One exploratory case within the broader KEIF framework.</div>
+      <div class="cs-meta-v">A study in anticipatory spatial ergonomics &mdash; one exploratory case within the broader KEIF framework.</div>
+    </div>
+
+    <div class="cs-facts">
+      <div><div class="cs-fact-label">Type</div><div class="cs-fact-value">Personal R&amp;D / Concept Prototype</div></div>
+      <div><div class="cs-fact-label">Role</div><div class="cs-fact-value">Concept &amp; Interaction Design</div></div>
+      <div><div class="cs-fact-label">Framework</div><div class="cs-fact-value">KEIF, Prototype 41</div></div>
     </div>
 
     <!-- In 10 Seconds annotation -->
@@ -932,7 +953,16 @@ body.show-extra-4 .conf-group[data-extra="4"] { display: flex; }
       </div>
     </div>
 
-    <div class="cs-row"><div class="cs-h"></div><div class="cs-b cs-lead"><p>Imagine sitting on a park bench when it begins to rain, and the bench responds, providing for you, simply because you are there. Imagine objects that don’t wait for you to touch them, that react simply because you’ve arrived.</p><p>That question is what Moving Bench is built on.</p></div></div>
+    <div class="cs-headlines">
+      <div class="cs-headlines-label">The Headlines</div>
+      <div class="cs-stat-grid">
+        <div class="cs-card"><span class="num">2</span><h3>Filtering layers</h3><p>Slow and fast EMA filters separate broad presence from precise intent.</p></div>
+        <div class="cs-card"><span class="num">680ms</span><h3>Dwell timer</h3><p>Stillness treated as a deliberate action, not idle time.</p></div>
+        <div class="cs-card"><span class="num">4</span><h3>Downstream concepts</h3><p>Umbrella, workstation, public, and barrier-free adaptability, all from one principle.</p></div>
+      </div>
+    </div>
+
+    <div class="cs-row cs-row-first"><div class="cs-b cs-lead"><p>Imagine sitting on a park bench when it begins to rain, and the bench responds, providing for you, simply because you are there. Imagine objects that don&rsquo;t wait for you to touch them, that react simply because you&rsquo;ve arrived.</p><p>That question is what I built Moving Bench on.</p></div></div>
 
     <figure class="cs-figure"><img src="images/moving-bench/figure-moving-bench-intro.jpg" alt=""/></figure>
 
@@ -940,23 +970,22 @@ body.show-extra-4 .conf-group[data-extra="4"] { display: flex; }
 
     <figure class="cs-figure"><video src="images/moving-bench/video-bench-demo.mp4" poster="images/moving-bench/video-bench-demo-poster.jpg" autoplay loop muted playsinline></video></figure>
 
-    <div class="cs-row"><div class="cs-h">The Problem: The Indifferent Interface</div><div class="cs-b"><p>Objects today share our space but anticipate nothing. They sit behind glass, or sit in the room inert, indifferent to us until we issue a physical command: a click, a tap, a press. This creates a constant command and response loop that is more tiring than it looks. Touchless systems are meant to solve it, but they usually make it worse: holding a gesture in midair produces “gorilla arm,” where the effort of interacting outweighs anything you gain.</p><p>The problem isn’t touch versus touchless. It’s that the object waits to be commanded at all.</p></div></div>
+    <div class="cs-row"><div class="cs-h"><span class="cs-eyebrow">Problem</span>The Indifferent Interface</div><div class="cs-b"><p>Objects today share our space but anticipate nothing. They sit behind glass, or sit in the room inert, indifferent to us until we issue a physical command: a click, a tap, a press. This creates a constant command-and-response loop that's more tiring than it looks. Touchless systems are meant to solve it, but they usually make it worse: holding a gesture in midair produces "gorilla arm," where the effort of interacting outweighs anything you gain.</p><p>The problem isn't touch versus touchless. It's that the object waits to be commanded at all.</p></div></div>
 
     <figure class="cs-figure cs-sm"><img src="images/moving-bench/figure-touch-vs-touchless.jpg" alt=""/></figure>
 
-    <div class="cs-row"><div class="cs-h">The Philosophy: Presence Over Command</div><div class="cs-b"><p>Interaction in the physical world doesn’t begin with a touch. It begins with presence. Before you reach for something, you’ve already approached it, oriented toward it, slowed down near it. Prototype 41 treats those moments, proximity, hesitation, directional momentum, the way a hand opens before it acts, as meaningful interaction states in their own right, not noise to be filtered out before the “real” command arrives.</p><p>Instead of forcing the body to conform to the hardware, the interface follows the logic of the body, treating the air as a functional surface with weight, friction, and momentum.</p></div></div>
+    <div class="cs-row"><div class="cs-h"><span class="cs-eyebrow">Philosophy</span>Presence Over Command</div><div class="cs-b"><p>Interaction in the physical world doesn't begin with a touch. It begins with presence. Before you reach for something, you've already approached it, oriented toward it, slowed down near it. I designed Prototype 41 to treat those moments &mdash; proximity, hesitation, directional momentum, the way a hand opens before it acts &mdash; as meaningful interaction states in their own right, not noise to be filtered out before the "real" command arrives.</p><p>Instead of forcing the body to conform to the hardware, the interface follows the logic of the body, treating the air as a functional surface with weight, friction, and momentum.</p></div></div>
 
     <figure class="cs-figure cs-sm"><img src="images/moving-bench/figure-air-interface.jpg" alt=""/></figure>
 
     
 <div class="cs-row cs-tech">
-  <div class="cs-h"></div>
   <div class="cs-b">
-    <div class="cs-tech-lead"><b>Technical Architecture :</b> To move past the limitations of traditional touchless systems, Prototype 41 utilizes a proprietary dual filtering logic to separate broad presence from precise intent.</div>
-    <div class="cs-tech-restate">To move past the limitations of traditional touchless systems, Prototype 41 utilizes a proprietary dual filtering logic to separate broad presence from precise intent.</div>
+    <div class="cs-tech-lead"><span class="cs-eyebrow">Technical Architecture</span><b>Dual filtering, real logic:</b> to move past the limitations of traditional touchless systems, I built Prototype 41 on a proprietary dual filtering logic that separates broad presence from precise intent.</div>
+    <div class="cs-tech-restate">Four mechanisms work together to make that separation feel physical rather than digital.</div>
     <div class="cs-cards">
       <div class="cs-card"><span class="num">1</span><h3>Dual Filtering Logic</h3><p>Two Exponential Moving Average (EMA) filters manage live input to ensure stability.</p><ul><li>Slow Filter (α = 0.12): manages the physics of rotation and environmental movement, providing a sense of mass and inertia.</li><li>Fast Filter (α = 0.35): handles high speed cursor tracking and selection precision.</li></ul></div>
-      <div class="cs-card"><span class="num">2</span><h3>Physics and Friction</h3><p>The world state is governed by a friction constant of 0.88. This ensures that digital elements behave like physical objects with weight, preventing the “twitchy” or jittery movement common in optical sensing.</p></div>
+      <div class="cs-card"><span class="num">2</span><h3>Physics and Friction</h3><p>The world state is governed by a friction constant of 0.88. This ensures that digital elements behave like physical objects with weight, preventing the "twitchy" or jittery movement common in optical sensing.</p></div>
       <div class="cs-card"><span class="num">3</span><h3>Geometric Span Scaling</h3><p>The environment breathes and scales based on the optical distance between the thumb and pinky finger. The interface literally adjusts its dimensions to match the physical reach of the user in real time.</p></div>
       <div class="cs-card"><span class="num">4</span><h3>Dwell Mechanics</h3><p>Stillness is treated as a deliberate functional action. A 680&thinsp;ms dwell timer acts as the selection bridge, rewarding focus and intent over constant motion.</p></div>
     </div>
@@ -966,20 +995,22 @@ body.show-extra-4 .conf-group[data-extra="4"] { display: flex; }
 
     <figure class="cs-figure"><video src="images/moving-bench/video-dwell-mechanics.mp4" poster="images/moving-bench/video-dwell-mechanics-poster.jpg" autoplay loop muted playsinline></video></figure>
 
-    <div class="cs-row"><div class="cs-h">What the System Started Doing</div><div class="cs-b"><p>Partway through development, the system began behaving less like a cursor and more like a spatial organism. Movement stopped reading as direct control and started reading as tension, proximity, resistance, and drift inside a shared field. It was no longer reacting to commands. It was negotiating proximity, inertia, hesitation, and intent.</p><p>That small behavioural shift turned out to be the whole idea. This is what predictive, embodied ergonomics actually feels like from the inside, and it became the foundation everything else in KEIF builds on.</p></div></div>
+    <div class="cs-row"><div class="cs-h"><span class="cs-eyebrow">Discovery</span>What the System Started Doing</div><div class="cs-b"><p>Partway through development, the system began behaving less like a cursor and more like a spatial organism. Movement stopped reading as direct control and started reading as tension, proximity, resistance, and drift inside a shared field. It was no longer reacting to commands. It was negotiating proximity, inertia, hesitation, and intent.</p><p>That small behavioural shift turned out to be the whole idea. This is what predictive, embodied ergonomics actually feels like from the inside, and it became the foundation everything else in KEIF builds on.</p></div></div>
 
     <figure class="cs-figure"><img src="images/moving-bench/figure-ergonomics.jpg" alt=""/></figure>
 
-    <div class="cs-row"><div class="cs-h">Off the Glass</div><div class="cs-b"><p>Everything above happens on a screen. But the principle doesn’t live in the screen. It lives in the relationship between a person and a responsive field.</p><p>The real question Prototype 41 raises is what happens when physical objects inherit this logic. Today, objects share our space but anticipate nothing; they wait to be operated, exactly like the indifferent interface. If an object could read the conditions around a person, their proximity, their state, their environment, and adapt before being asked, the entire texture of using it would change.</p><p>The bench is the demonstration. These are early sketches of where the principle goes next.</p></div></div>
+    <div class="cs-row"><div class="cs-h"><span class="cs-eyebrow">Extension</span>Off the Glass</div><div class="cs-b"><p>Everything above happens on a screen. But the principle doesn't live in the screen. It lives in the relationship between a person and a responsive field.</p><p>The real question Prototype 41 raises is what happens when physical objects inherit this logic. Today, objects share our space but anticipate nothing; they wait to be operated, exactly like the indifferent interface. If an object could read the conditions around a person &mdash; their proximity, their state, their environment &mdash; and adapt before being asked, the entire texture of using it would change.</p><p>The bench is the demonstration. These are early sketches of where the principle goes next.</p></div></div>
 
     <figure class="cs-figure"><img src="images/moving-bench/figure-sketches-next.jpg" alt=""/></figure>
 
-    <div class="cs-concepts"><div class="cs-concept"><div class="ph"><img src="images/moving-bench/concept-bench-lead.jpg" alt=""/></div><h3>Umbrella Adaptability</h3><p>An umbrella that responds to its own situation. It contracts in a crowd or a narrow space and opens out when there is room, adapting its form to protect the person without them managing it. Anticipatory function at the scale of a single object you carry.</p></div><div class="cs-concept"><div class="ph"><img src="images/moving-bench/concept-umbrella-adaptability.jpg" alt=""/></div><h3>Workstation Adaptability</h3><p>A workstation that isn’t a fixed table but a responsive arrangement, surface and seating that move on their own. When the sun falls too harshly across it, the table drifts out of the light; when a group of four gathers, the station reconfigures around them. It adapts in its own breath, rather than waiting for someone to drag a chair or adjust a blind.</p></div><div class="cs-concept"><div class="ph"><img src="images/moving-bench/concept-workstation-adaptability.jpg" alt=""/></div><h3>Public Adaptability</h3><p>Environments that respond to crowds, reading how people gather, flow, and bottleneck, and reshaping to move them through space more easily. Anticipatory design at the scale of many bodies at once.</p></div><div class="cs-concept"><div class="ph"><img src="images/moving-bench/concept-public-adaptability.jpg" alt=""/></div><h3>Barrier Free Adaptability</h3><p>Physical environments that reconfigure for an individual in the moment, using sensing and AI to read who is moving through and how, and changing physically to help them. Anticipation in service of access. Space that adjusts to a person’s needs instead of forcing the person to adjust to it.</p></div></div>
+    <div class="cs-concepts"><div class="cs-concept"><div class="ph"><img src="images/moving-bench/concept-bench-lead.jpg" alt=""/></div><h3>Umbrella Adaptability</h3><p>An umbrella that responds to its own situation. It contracts in a crowd or a narrow space and opens out when there is room, adapting its form to protect the person without them managing it.</p></div><div class="cs-concept"><div class="ph"><img src="images/moving-bench/concept-umbrella-adaptability.jpg" alt=""/></div><h3>Workstation Adaptability</h3><p>A workstation that isn't a fixed table but a responsive arrangement. When the sun falls too harshly across it, the table drifts out of the light; when a group of four gathers, the station reconfigures around them.</p></div><div class="cs-concept"><div class="ph"><img src="images/moving-bench/concept-workstation-adaptability.jpg" alt=""/></div><h3>Public Adaptability</h3><p>Environments that respond to crowds, reading how people gather, flow, and bottleneck, and reshaping to move them through space more easily.</p></div><div class="cs-concept"><div class="ph"><img src="images/moving-bench/concept-public-adaptability.jpg" alt=""/></div><h3>Barrier Free Adaptability</h3><p>Physical environments that reconfigure for an individual in the moment, using sensing and AI to read who is moving through and how, and changing physically to help them.</p></div></div>
 
-    <div class="cs-row"><div class="cs-h">Toward Anticipatory Systems</div><div class="cs-b"><p>Prototype 41 exists as an early exploration into systems capable of adapting through inferred behavioural understanding rather than explicit instruction alone.</p><p>Rather than optimizing only for efficiency, KEIF investigates how objects, environments, and interfaces might eventually negotiate with human presence in more spatially responsive and physically supportive ways.</p><p>The Moving Bench functions as one exploratory study within a broader investigation into anticipatory behavioural adaptation across future systems.</p></div></div>
+    <div class="cs-row"><div class="cs-h"><span class="cs-eyebrow">Outlook</span>Toward Anticipatory Systems</div><div class="cs-b"><p>Prototype 41 exists as an early exploration into systems capable of adapting through inferred behavioural understanding rather than explicit instruction alone.</p><p>Rather than optimizing only for efficiency, I built KEIF to investigate how objects, environments, and interfaces might eventually negotiate with human presence in more spatially responsive and physically supportive ways.</p><p>The Moving Bench functions as one exploratory study within a broader investigation into anticipatory behavioural adaptation across future systems.</p></div></div>
+    <div class="cs-quote">Don't wait to be touched. Notice you've arrived.</div>
 
     <div class="cs-backbottom"><a href="index.html">←&nbsp;&nbsp;Back to all projects</a></div>
 
+  </div>
     <footer class="footer-row">
       <span class="pill" data-copy="hello@benjaminlemar.com" style="cursor:pointer">hello@benjaminlemar.com</span>
       <span class="pill no-hover">©&nbsp; 2026&nbsp; benjamin lemar</span>

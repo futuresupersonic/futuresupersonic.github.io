@@ -134,126 +134,102 @@ img, video { display: block; max-width: 100%; height: auto; }
    CASE STUDY LAYOUT
    ========================================================= */
 .cs-main { padding-top: 137px; padding-bottom: 40px; }
+.cs-article { max-width: 680px; margin: 0 auto; }
 
-/* Title + sub-label — airy editorial top, indented to the rail */
+/* Title + sub-label */
 .cs-title {
-  margin-left: var(--cs-rail);
   margin-top: 50px;
   font-size: 32px;
   line-height: 1.08;
   letter-spacing: -0.02em;
   font-weight: 400;
+  text-align: center;
 }
 .cs-sublabel {
-  margin-left: var(--cs-rail);
-  margin-top: 232px;
-  margin-bottom: 70px;
+  margin: 32px 0 32px;
+  text-align: center;
 }
-.cs-sublabel .main { color: var(--text); font-size: 22px; font-weight: 400; line-height: 1.22; letter-spacing: -0.015em; }
-.cs-sublabel .sub  { color: var(--muted); margin-top: 3px; font-size: 22px; font-weight: 400; line-height: 1.22; letter-spacing: -0.015em; }
+.cs-sublabel .main { color: var(--text); font-size: 19px; font-weight: 500; line-height: 1.32; letter-spacing: -0.015em; }
+.cs-sublabel .sub  { color: var(--muted); margin-top: 6px; font-size: 14px; font-weight: 400; line-height: 1.4; }
 
-/* Section labels (rail-indented, optional grey sub-line) */
-.cs-label {
-  margin-left: var(--cs-rail);
-  margin-bottom: 22px;
-}
-.cs-label .main { color: var(--text); font-size: 22px; font-weight: 400; line-height: 1.22; letter-spacing: -0.015em; }
-.cs-label .sub  { color: var(--muted); margin-top: 3px; font-size: var(--fs); }
+/* facts block */
+.cs-facts { display:grid; grid-template-columns: repeat(3,1fr); gap:18px; margin: 0 auto 40px; padding: 22px 0; border-top:1px solid rgba(43,23,3,0.12); border-bottom:1px solid rgba(43,23,3,0.12); }
+.cs-fact-label { font-size:11px; font-weight:600; letter-spacing:0.08em; text-transform:uppercase; color:var(--muted); margin-bottom:6px; }
+.cs-fact-value { font-size:13.5px; line-height:1.5; }
+@media (max-width:720px){ .cs-facts { grid-template-columns: 1fr; gap:16px; } }
 
-/* Vertical rhythm between major blocks */
-.cs-block { margin-bottom: 90px; }
-.cs-block.tight { margin-bottom: 56px; }
+/* headlines / stat cards */
+.cs-headlines { margin: 0 0 48px 0; }
+.cs-headlines-label { font-size: var(--fs); font-weight:500; color: var(--text); margin-bottom:14px; text-align:center; }
+.cs-stat-grid { display:grid; grid-template-columns: repeat(3,1fr); gap:10px; }
+.cs-stat-card { background:#fbfbfa; padding: 20px 22px 22px; border-radius:10px; }
+.cs-stat-card .num { display:block; font-size:20px; color: rgba(43,23,3,0.4); font-feature-settings:'tnum'; margin-bottom: 16px; }
+.cs-stat-card h3 { font-size:13px; font-weight:600; margin-bottom:8px; }
+.cs-stat-card p { font-size:12.5px; line-height:1.6; color: rgba(43,23,3,0.72); }
+@media (max-width:720px){ .cs-stat-grid{ grid-template-columns:1fr; } }
 
-/* Figures (images) */
-.cs-figure { width: 100%; }
-.cs-figure img { width: 100%; display: block; }
-.cs-figure.left { margin-left: 0; }
-.cs-figure.w72  { width: 72%; }
-.cs-cap {
-  margin-top: 8px;
-  color: var(--muted);
-  font-size: var(--fs);
-  text-align: right;
-}
+/* Section labels → eyebrow + heading */
+.cs-eyebrow { display:block; font-size:11px; font-weight:600; letter-spacing:0.08em; text-transform:uppercase; color: var(--muted); margin-bottom:10px; }
+.cs-label { margin-bottom: 18px; }
+.cs-label .main { color: var(--text); font-size: 23px; font-weight: 500; line-height: 1.28; letter-spacing: -0.015em; }
+.cs-label .sub  { color: var(--muted); margin-top: 6px; font-size: 13px; }
 
-/* Text block pinned to the right column (left side intentionally empty) */
-.cs-textblock {
-  width: var(--cs-col);
-  margin-left: auto;
-}
-.cs-textblock p { font-size: var(--cs-body); line-height: 1.45; }
-.cs-textblock p + p { margin-top: 1.25em; }
+/* Vertical rhythm between major blocks — single column, divider rule between beats */
+.cs-block { margin-bottom: 56px; padding-top:48px; border-top: 1px solid rgba(43,23,3,0.12); }
+.cs-block.first { border-top:none; padding-top:0; }
+.cs-block.tight { margin-bottom: 40px; }
 
-/* Image-left + text-right split row */
-.cs-split {
-  display: flex;
-  gap: var(--gap);
-  align-items: flex-start;
-}
-.cs-split .col-img { flex: 0 0 auto; }
-.cs-split .col-img.w47 { width: 47%; }
-.cs-split .col-img.w23 { width: 23%; }
-.cs-split .col-img img { width: 100%; }
-.cs-split .col-text {
-  flex: 0 0 var(--cs-col);
-  width: var(--cs-col);
-  margin-left: auto;
-}
-.cs-split .col-text p { font-size: var(--cs-body); line-height: 1.45; }
-.cs-split .col-text p + p { margin-top: 1.25em; }
+/* Figures */
+.cs-figure { width: 100%; max-width:74%; margin:0 auto; }
+.cs-figure img { width: 100%; display: block; border-radius:8px; }
+.cs-figure.w72  { max-width: 74%; }
+.cs-cap { margin-top: 10px; color: var(--muted); font-size: 12.5px; text-align:center; font-style:italic; }
+
+/* Text block — full width of the narrow column, no more empty rail column */
+.cs-textblock { width: 100%; }
+.cs-textblock p { font-size: 17px; line-height: 1.65; }
+.cs-textblock p + p { margin-top: 1em; }
+
+/* Image + text split → stacked in the narrow column */
+.cs-split { display:flex; flex-direction:column; gap:20px; }
+.cs-split .col-img { width:100% !important; }
+.cs-split .col-img img { width: 100%; border-radius:8px; }
+.cs-split .col-text { width:100%; }
+.cs-split .col-text p { font-size: 16px; line-height: 1.6; }
+.cs-split .col-text p + p { margin-top: 1em; }
 .cs-split .col-text .hl { color: var(--text); }
 .cs-split .col-text.dim p { color: var(--muted); }
 .cs-split .col-text.dim .hl { color: var(--text); }
 
-/* Direction cards (A–E): rail label left, grey cards right */
-.cs-directions { display: flex; gap: var(--gap); align-items: flex-start; }
-.cs-directions .rail-label {
-  flex: 0 0 auto;
-  margin-left: var(--cs-rail);
-  padding-right: var(--gap);
-}
-.cs-directions .cards {
-  flex: 0 0 var(--cs-col);
-  width: var(--cs-col);
-  margin-left: auto;
-  display: flex;
-  flex-direction: column;
-  gap: var(--gap);
-}
-.cs-card { background: var(--pill-bg); padding: 22px 26px 26px; }
-.cs-card .letter { font-size: 26px; line-height: 1; margin-bottom: 26px; }
-.cs-card h4 { font-weight: 500; font-size: var(--fs); margin-bottom: 6px; }
-.cs-card p { color: var(--muted); font-size: var(--fs); line-height: 1.5; }
-.cs-card p + p { margin-top: 1em; }
+/* Direction cards (A–E) — stacked single column */
+.cs-directions { display:flex; flex-direction:column; gap: 18px; }
+.cs-directions .cards { display: flex; flex-direction: column; gap: 10px; }
+.cs-card { background: var(--pill-bg); padding: 18px 20px 20px; border-radius:10px; }
+.cs-card .letter { font-size: 20px; line-height: 1; margin-bottom: 14px; color: rgba(43,23,3,0.4); }
+.cs-card h4 { font-weight: 600; font-size: 13px; margin-bottom: 8px; }
+.cs-card p { color: var(--muted); font-size: 12.5px; line-height: 1.55; }
+.cs-card p + p { margin-top: 0.8em; }
 
-/* Image pair (medium, left-aligned to the rail) */
-.cs-pair {
-  display: flex;
-  gap: 64px;
-  margin-left: var(--cs-rail);
-}
-.cs-pair .item { flex: 0 0 30%; width: 30%; }
-.cs-pair .item img { width: 100%; }
+/* Image pair — stacked in narrow column */
+.cs-pair { display:flex; flex-direction:column; gap: 16px; }
+.cs-pair .item { width:100%; }
+.cs-pair .item img { width: 100%; border-radius:8px; }
 
-/* Closing statement — large muted right column with a highlighted lead word */
-.cs-closing {
-  width: var(--cs-col);
-  margin-left: auto;
-  margin-top: 70px;
-}
-.cs-closing p {
-  font-size: clamp(18px, 2.1vw, 24px);
-  line-height: 1.35;
-  color: var(--muted);
-}
+/* Closing statement */
+.cs-closing { width: 100%; margin-top: 8px; }
+.cs-closing p { font-size: 17px; line-height: 1.55; color: var(--muted); }
 .cs-closing .hl { color: var(--text); }
-.cs-closing p + p { margin-top: 1.25em; }
+.cs-closing p + p { margin-top: 1em; }
+
+.cs-quote { text-align:center; font-size: clamp(22px,3.1vw,28px); font-weight:400;
+            color: rgba(43,23,3,0.5); line-height:1.3; letter-spacing:-0.3px;
+            margin: 8px auto 48px; max-width: 100%; }
 
 /* Back link footer */
 .cs-back {
   display: flex;
   justify-content: center;
-  padding: 130px 0 120px;
+  padding: 40px 0 0;
 }
 .cs-back a {
   display: inline-flex;
@@ -268,14 +244,13 @@ img, video { display: block; max-width: 100%; height: auto; }
    MOBILE (≤ 720px)
    ========================================================= */
 @media (max-width: 720px) {
-  :root { --gutter: 12px; --gap: 6px; --nav-gap: 8px; --cs-rail: 0px; --cs-col: 100%; }
+  :root { --gutter: 12px; --gap: 6px; --nav-gap: 8px; }
 
   .cs-main { padding-top: 110px; }
+  .cs-article { max-width:100%; }
   .cs-title { font-size: 22px; margin-top: 20px; }
-  .cs-sublabel { margin-top: 60px; margin-bottom: 40px; }
-  .cs-sublabel .main, .cs-sublabel .sub { font-size: 18px; }
-  .cs-block { margin-bottom: 56px; }
-  .cs-label .main { font-size: 18px; }
+  .cs-sublabel { margin: 24px 0; }
+  .cs-label .main { font-size: 19px; }
 
   /* Nav: home + work + about only, about reveals the rest */
   .nav-row { flex-wrap: nowrap; justify-content: flex-start; align-items: center; gap: 8px; overflow: visible; }
@@ -311,33 +286,17 @@ img, video { display: block; max-width: 100%; height: auto; }
     padding:0; border-radius:50%; font-size:16px; line-height:1;
   }
 
-  /* Content: everything stacks full width */
-  .cs-textblock { width: 100%; margin-left: 0; }
-  .cs-figure.w72 { width: 100%; }
-
-  .cs-split { flex-direction: column; gap: 18px; }
-  .cs-split .col-img.w47,
-  .cs-split .col-img.w23 { width: 70%; }
-  .cs-split .col-text { width: 100%; flex: 0 0 100%; margin-left: 0; }
-
-  .cs-directions { flex-direction: column; gap: 16px; }
-  .cs-directions .rail-label { margin-left: 0; }
-  .cs-directions .cards { width: 100%; flex: 0 0 100%; margin-left: 0; }
-
-  .cs-pair { flex-direction: column; gap: 12px; margin-left: 0; }
-  .cs-pair .item { width: 70%; }
-
-  .cs-closing { width: 100%; margin-left: 0; }
-  .cs-back { padding: 70px 0 80px; }
+  .cs-figure.w72 { max-width: 100%; }
+  .cs-back { padding: 32px 0 0; }
 }
 
 /* ===== In 10 Seconds annotation component ===== */
 .cs-10s {
-  width: var(--cs-col);
-  margin-left: auto;
+  width: 100%;
   background: var(--pill-bg);
   border-radius: 10px;
   padding: 18px 22px 20px;
+  margin-bottom: 40px;
 }
 .cs-10s-label {
   font-size: var(--fs);
@@ -427,6 +386,7 @@ img, video { display: block; max-width: 100%; height: auto; }
      ========================================================= -->
 <main class="cs-main">
   <div class="container">
+  <div class="cs-article">
 
     <!-- Title -->
     <h1 class="cs-title">Tea Factory Gen - Reintroducing Tea</h1>
@@ -435,6 +395,12 @@ img, video { display: block; max-width: 100%; height: auto; }
     <div class="cs-sublabel">
       <div class="main">Reintroducing The Culture of Tea</div>
       <div class="sub">TFG New Onomichi Experience</div>
+    </div>
+
+    <div class="cs-facts">
+      <div><div class="cs-fact-label">Client</div><div class="cs-fact-value">Tea Factory Gen</div></div>
+      <div><div class="cs-fact-label">Role</div><div class="cs-fact-value">Creative Direction &amp; Environmental Graphics</div></div>
+      <div><div class="cs-fact-label">Architecture</div><div class="cs-fact-value">studiobasket (Masami Nakata)</div></div>
     </div>
 
     <!-- In 10 Seconds annotation -->
@@ -447,131 +413,122 @@ img, video { display: block; max-width: 100%; height: auto; }
       </div>
     </div>
 
-    <!-- Hero image (caption baked into the render) -->
-    <div class="cs-block">
-      <figure class="cs-figure">
-        <img src="images/tfg-onomichi-retailfront/tfg-hero.jpg" alt="Tea Factory Gen Onomichi storefront — image and store design architecture by Masami Nakata-San (studiobasket)" />
-      </figure>
+    <div class="cs-headlines">
+      <div class="cs-headlines-label">The Headlines</div>
+      <div class="cs-stat-grid">
+        <div class="cs-stat-card"><span class="num">5</span><h3>Directions explored</h3><p>Concept directions (A&ndash;E) evaluated before a final recommendation.</p></div>
+        <div class="cs-stat-card"><span class="num">3</span><h3>Evaluation criteria</h3><p>Recognisability, curiosity, and adaptability, applied to every direction.</p></div>
+        <div class="cs-stat-card"><span class="num">Built</span><h3>Not just rendered</h3><p>The recommended direction was constructed &mdash; photographed on-site, facade and interior.</p></div>
+      </div>
     </div>
 
-    <!-- Intro narrative (right column) -->
-    <div class="cs-block">
+    <!-- Hero image (caption baked into the render) -->
+    <figure class="cs-figure">
+      <img src="images/tfg-onomichi-retailfront/tfg-hero.jpg" alt="Tea Factory Gen Onomichi storefront — image and store design architecture by Masami Nakata-San (studiobasket)" />
+    </figure>
+
+    <!-- Intro narrative -->
+    <div class="cs-block first">
       <div class="cs-textblock">
         <p>Tea is deeply embedded in Japanese culture, yet increasingly absent from everyday behavior. For many consumers, tea has become associated with expertise, tradition, and ritual rather than curiosity and discovery.</p>
-        <p>As Tea Factory Gen prepared to expand into a new retail environment, the challenge was not simply to identify the store as a place that sells tea. The challenge was to create a storefront experience capable of attracting people who were not already tea enthusiasts.</p>
-        <p>The resulting visual language explored how typography, environmental graphics, symbolic forms, and storefront interventions could transform the facade from a static identifier into a tool for engagement.</p>
-        <p>Rather than communicating tea as a product, the system was designed to communicate tea as an experience worth exploring.</p>
+        <p>As Tea Factory Gen prepared to expand into a new retail environment, the challenge wasn't simply to identify the store as a place that sells tea. It was to create a storefront experience capable of attracting people who weren't already tea enthusiasts.</p>
+        <p>The resulting visual language explores how typography, environmental graphics, symbolic forms, and storefront interventions could transform the facade from a static identifier into a tool for engagement &mdash; communicating tea as an experience worth exploring, not just a product.</p>
       </div>
     </div>
 
     <!-- Research moodboard + facade pair -->
     <div class="cs-block">
       <div class="cs-split">
-        <div class="col-img w47" style="width:60%">
+        <div class="col-img">
           <img src="images/tfg-onomichi-retailfront/tfg-moodboard.jpg" alt="Research moodboard — typography, illustration and signage studies" />
         </div>
-        <div class="col-img" style="width:38%;margin-left:auto">
+        <div class="col-img">
           <img src="images/tfg-onomichi-retailfront/tfg-facade.jpg" alt="Facade material study and entrance render" />
         </div>
       </div>
     </div>
 
     <!-- Annotated storefront render -->
-    <div class="cs-block">
-      <figure class="cs-figure">
-        <img src="images/tfg-onomichi-retailfront/tfg-render-signs.jpg" alt="Storefront render with TEA FACTORY GEN sign and 茶 sign annotations" />
-      </figure>
-    </div>
+    <figure class="cs-figure">
+      <img src="images/tfg-onomichi-retailfront/tfg-render-signs.jpg" alt="Storefront render with TEA FACTORY GEN sign and 茶 sign annotations" />
+    </figure>
 
     <!-- Initial conceptual process -->
     <div class="cs-block">
-      <div class="cs-label"><div class="main">Initial conceptual process</div></div>
+      <div class="cs-label"><span class="cs-eyebrow">Process</span><div class="main">Initial Conceptual Process</div></div>
       <div class="cs-split">
-        <div class="col-img w47">
+        <div class="col-img">
           <img src="images/tfg-onomichi-retailfront/tfg-concept-set.gif" alt="Concept sheet DS2 — sign graphic concept" />
         </div>
         <div class="col-text dim">
-          <p>The initial exploration focused on identifying visual signals capable of attracting attention beyond existing tea consumers. Rather than beginning with products, packaging, or traditional tea imagery, the process investigated the cultural artifacts, symbols, behaviours, and visual languages surrounding tea.</p>
-          <p>Through studies of typography, vernacular signage, Japanese graphic culture, symbolic forms, and environmental interventions, the work explored how familiarity and curiosity could coexist within the storefront. The objective was to discover visual devices that could communicate tea indirectly, encouraging people to engage with the space before understanding exactly what it offered.</p>
-          <p>These early explorations established the foundation for later concept directions, helping define how Tea Factory Gen could feel contemporary, accessible, and culturally grounded without relying on conventional tea retail cues.</p>
+          <p>I began by identifying visual signals capable of attracting attention beyond existing tea consumers. Rather than starting with products, packaging, or traditional tea imagery, I investigated the cultural artifacts, symbols, behaviours, and visual languages surrounding tea.</p>
+          <p>Through studies of typography, vernacular signage, Japanese graphic culture, symbolic forms, and environmental interventions, I explored how familiarity and curiosity could coexist within the storefront &mdash; visual devices that communicate tea indirectly, encouraging people to engage with the space before understanding exactly what it offered.</p>
         </div>
       </div>
     </div>
 
     <!-- Late stage concept development -->
     <div class="cs-block">
-      <div class="cs-label"><div class="main">Late Stage Concept Development</div></div>
+      <div class="cs-label"><span class="cs-eyebrow">Exploration</span><div class="main">Late Stage Concept Development</div></div>
       <figure class="cs-figure">
         <img src="images/tfg-onomichi-retailfront/tfg-board-latestage.jpg" alt="Late stage concept development board — directions A through D" />
       </figure>
     </div>
 
-    <!-- 2nd concept design directions: rail label + A–E cards -->
+    <!-- 2nd concept design directions: A–E cards -->
     <div class="cs-block">
       <div class="cs-directions">
-        <div class="rail-label">
-          <div class="cs-label" style="margin-left:0;margin-bottom:0"><div class="main">2nd Concept Design Directions</div></div>
-        </div>
+        <div class="cs-label"><span class="cs-eyebrow">Directions</span><div class="main">2nd Concept Design Directions</div></div>
         <div class="cards">
           <div class="cs-card">
             <div class="letter">A</div>
             <h4>Abstract Familiarity</h4>
-            <p>This direction explores abstraction through form rather than direct representation. Drawing loosely from the structure and proportions of the character 茶, the concepts transform the familiar symbol into a series of graphic objects that suggest tea without explicitly depicting it.</p>
-            <p>The objective was to create recognition through association rather than explanation. By moving away from literal representations of tea, the work investigates whether shape, rhythm, and silhouette alone can communicate enough familiarity to attract attention while maintaining a sense of curiosity and discovery.</p>
+            <p>Drawing loosely from the structure and proportions of the character 茶, this direction transforms the familiar symbol into graphic objects that suggest tea without depicting it directly &mdash; recognition through association rather than explanation.</p>
           </div>
           <div class="cs-card">
             <div class="letter">B</div>
             <h4>Layered Symbol</h4>
-            <p>This direction uses the kyusu, the traditional Japanese teapot, as a behavioral symbol rather than a product illustration. Through rough digital forms, layered typography, and references to pouring and drinking, the work focuses on the act of tea rather than tea itself.</p>
-            <p>The intention was to create a visual language that feels contemporary while remaining culturally grounded, using familiar rituals and actions to communicate tea through experience rather than direct explanation.</p>
+            <p>Uses the kyusu, the traditional Japanese teapot, as a behavioral symbol rather than a product illustration &mdash; focused on the act of tea rather than tea itself, contemporary yet culturally grounded.</p>
           </div>
           <div class="cs-card">
             <div class="letter">C</div>
             <h4>Typography as Experience</h4>
-            <p>This direction explores the space between tradition and contemporary visual culture. Rustic textures and atmospheric gradients reference the natural origins of tea, while deconstructed three dimensional teapot forms introduce a sense of movement, experimentation, and reinterpretation.</p>
-            <p>Rather than presenting tea as a fixed cultural object, the work treats it as something open to exploration. The fragmented forms create moments of visual ambiguity that encourage closer inspection, allowing curiosity to become part of the communication itself.</p>
+            <p>Rustic textures and atmospheric gradients reference tea's natural origins, while deconstructed 3D teapot forms create moments of visual ambiguity that invite closer inspection.</p>
           </div>
           <div class="cs-card">
             <div class="letter">D</div>
             <h4>Brand Signal</h4>
-            <p>The concept reinterprets existing elements from Tea Factory Gen's visual identity, reducing them to their most recognizable forms and amplifying them through scale, color, and contrast. Combined with atmospheric imagery inspired by the tea fields themselves, the result creates a visual presence that feels simultaneously familiar and forward looking. Rather than communicating through information, the concept relies on visual energy and recognition to attract attention.</p>
+            <p>Reinterprets Tea Factory Gen's existing visual identity, reduced to its most recognizable forms and amplified through scale, color, and contrast &mdash; familiar and forward-looking at once.</p>
           </div>
           <div class="cs-card">
             <div class="letter">E</div>
             <h4>Symbol As Object</h4>
-            <p>This direction transforms the character 茶 into a three dimensional object, shifting it from language into artifact. The intention was not simply to stylize the character, but to explore how a familiar cultural symbol might operate within a more contemporary visual environment. Through bold colour, dimensionality, and playful distortion, the work investigates whether the symbol itself can become a point of attraction and curiosity, encouraging people to engage before they fully understand what they are seeing.</p>
+            <p>Transforms the character 茶 into a three-dimensional object, shifting it from language into artifact &mdash; bold colour and playful distortion inviting engagement before full understanding.</p>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- Symbol-as-object exploration board -->
+    <!-- Design Evaluation Criteria -->
     <div class="cs-block">
-      <div class="cs-label"><div class="main">Design Evaluation Criteria</div></div>
+      <div class="cs-label"><span class="cs-eyebrow">Criteria</span><div class="main">Design Evaluation Criteria</div></div>
       <div class="cs-textblock">
-        <p>Each concept direction was evaluated against three criteria: recognisability, curiosity, and adaptability. Concepts needed to communicate a connection to tea without relying on literal product imagery, attract attention within a dense urban streetscape, and function across signage, environmental graphics, and future brand applications.</p>
-        <p>These criteria helped narrow a broad range of visual explorations into a smaller set of viable directions for client review.</p>
+        <p>I evaluated each direction against three criteria: recognisability, curiosity, and adaptability. Concepts needed to signal a connection to tea without literal product imagery, attract attention within a dense urban streetscape, and function across signage, environmental graphics, and future brand applications &mdash; narrowing a broad set of explorations into a smaller set of viable directions for client review.</p>
       </div>
     </div>
 
     <!-- Symbol-as-object exploration board -->
-    <div class="cs-block">
-      <figure class="cs-figure">
-        <img src="images/tfg-onomichi-retailfront/tfg-board-symbol.jpg" alt="Symbol-as-object exploration board — 茶 dimensional studies" />
-      </figure>
-    </div>
+    <figure class="cs-figure">
+      <img src="images/tfg-onomichi-retailfront/tfg-board-symbol.jpg" alt="Symbol-as-object exploration board — 茶 dimensional studies" />
+    </figure>
 
     <!-- My directional advice section -->
     <div class="cs-block">
-      <div class="cs-label">
-        <div class="main">My Directional Advice To The Client Via Design Exploration</div>
-        <div class="sub">TFG New Onomichi Experience</div>
-      </div>
+      <div class="cs-label"><span class="cs-eyebrow">Recommendation</span><div class="main">My Directional Advice to the Client</div></div>
       <div class="cs-textblock">
-        <p>While several directions successfully communicated tea, I ultimately advised moving toward a solution that balanced cultural recognition with contemporary accessibility.</p>
-        <p>The strongest opportunities emerged when familiar symbols were simplified and amplified rather than completely abstracted. Directions rooted in the character 茶 demonstrated an ability to create immediate recognition while remaining visually distinct from traditional tea retail environments.</p>
-        <p>My recommendation was to treat the storefront as a cultural invitation rather than a product advertisement. By using bold symbolic forms, restrained typography, and highly visible environmental graphics, the facade could attract both tea enthusiasts and casual visitors without requiring prior knowledge or expertise.</p>
-        <p>This approach aligned closely with Tea Factory Gen's ambition to broaden engagement with tea culture while maintaining authenticity to its origins.</p>
+        <p>While several directions successfully communicated tea, I ultimately advised moving toward a solution balancing cultural recognition with contemporary accessibility.</p>
+        <p>The strongest opportunities emerged when familiar symbols were simplified and amplified rather than fully abstracted. Directions rooted in the character 茶 created immediate recognition while staying visually distinct from traditional tea retail environments.</p>
+        <p>My recommendation treated the storefront as a cultural invitation rather than a product advertisement &mdash; bold symbolic forms, restrained typography, and highly visible environmental graphics that could attract both tea enthusiasts and casual visitors without requiring prior knowledge.</p>
       </div>
     </div>
 
@@ -591,44 +548,42 @@ img, video { display: block; max-width: 100%; height: auto; }
     </div>
 
     <!-- Connector board -->
-    <div class="cs-block">
-      <figure class="cs-figure">
-        <img src="images/tfg-onomichi-retailfront/tfg-signboard-marks.gif" alt="Symbol direction board with connectors" />
-      </figure>
-    </div>
+    <figure class="cs-figure">
+      <img src="images/tfg-onomichi-retailfront/tfg-signboard-marks.gif" alt="Symbol direction board with connectors" />
+    </figure>
 
     <!-- Scent-behaviour mockup + explanation -->
     <div class="cs-block">
+      <div class="cs-label"><span class="cs-eyebrow">Outcome</span><div class="main">Tested Across Every Touchpoint</div></div>
       <div class="cs-split">
-        <div class="col-img w23">
+        <div class="col-img">
           <img src="images/tfg-onomichi-retailfront/tfg-signage-comps.gif" alt="Scent-driven visual behaviour mockup" />
         </div>
         <div class="col-text">
-          <p>The selected direction was further tested through colour, scale, and environmental applications to understand how the symbol would perform across different touchpoints.</p>
-          <p>Particular attention was given to visibility from a distance, recognition at street level, and adaptability across temporary and permanent signage systems. By reducing the visual language to a small number of memorable elements, the storefront gained a stronger presence within the surrounding streetscape while remaining flexible enough to evolve over time.</p>
-          <p>The resulting system demonstrates how a single cultural symbol can operate simultaneously as signage, identity, and environmental graphic, creating a cohesive experience across the entire retail environment.</p>
+          <p>I tested the selected direction further through colour, scale, and environmental applications to see how the symbol performed across different touchpoints &mdash; visibility from a distance, recognition at street level, and adaptability across temporary and permanent signage.</p>
+          <p>By reducing the visual language to a small number of memorable elements, the storefront gained a stronger presence within the surrounding streetscape while staying flexible enough to evolve. The result: a single cultural symbol operating simultaneously as signage, identity, and environmental graphic.</p>
         </div>
       </div>
     </div>
 
     <!-- Final render (caption baked into image) -->
-    <div class="cs-block">
-      <figure class="cs-figure">
-        <img src="images/tfg-onomichi-retailfront/tfg-render-comein.jpg" alt="Final storefront render with temporary digital flex sign" />
-      </figure>
-    </div>
+    <figure class="cs-figure">
+      <img src="images/tfg-onomichi-retailfront/tfg-render-comein.jpg" alt="Final storefront render with temporary digital flex sign" />
+    </figure>
 
     <!-- Closing statement -->
     <div class="cs-closing">
       <p>Tea Factory Gen was never intended to compete through information alone. The opportunity was to create a storefront capable of transforming curiosity into participation.</p>
-      <p>By exploring abstraction, symbolism, typography, and environmental graphics, the project reframed tea not as a specialist product but as a cultural experience worth discovering. The final recommendation demonstrates how strategic visual intervention can help traditional products remain relevant within contemporary retail environments while preserving the authenticity that gives them value.</p>
+      <p>By exploring abstraction, symbolism, typography, and environmental graphics, I reframed tea not as a specialist product but as a cultural experience worth discovering &mdash; strategic visual intervention that lets a traditional product stay relevant in a contemporary retail environment without losing the authenticity that gives it value.</p>
     </div>
+    <div class="cs-quote">Make people curious before you make them customers.</div>
 
     <!-- Back link -->
     <div class="cs-back">
       <a href="index.html"><span aria-hidden="true">←</span><span>Back to all projects</span></a>
     </div>
 
+  </div>
   </div>
 </main>
 
