@@ -681,7 +681,13 @@ body.show-extra-4 .conf-group[data-extra="4"] { display: flex; }
 /* freeze entries at their visible resting state once interaction starts,
    so FLIP re-parenting can't replay (or revert) the entrance animation.
    transform stays overridable (no !important) so FLIP's inline transform wins. */
-body.ready .feed-entry { animation: none !important; opacity: 1 !important; transform: none; }
+body.ready .feed-entry:not(.state-pop) { animation: none !important; opacity: 1 !important; transform: none; }
+/* same staggered entrance as .conf-row.conf-pop, applied to whole entries for the other filters */
+body.ready .feed-entry.state-pop,
+.conf-group.state-pop {
+  animation: confRowIn .5s cubic-bezier(.22,.61,.36,1) both !important;
+  animation-delay: var(--pop-delay, 0ms) !important;
+}
 
 /* confidential access lane (pre-unlock) */
 .feed_container.lane .feed-entry { opacity: .4; transition: opacity .45s ease; }
@@ -1821,6 +1827,37 @@ a.pill.conf.title-bar > span { pointer-events: none; }
     return original.slice();
   }
 
+  /* ---- Cascade for non-confidential filters ------------------------
+     Same feel as the confidential sort: featured entries fade/slide in
+     one after another (55ms step, capped). Popped entries skip the FLIP
+     glide so the two motions don't fight. */
+  function popEntries(list) {
+    if (reduce) return;
+    var STEP = 55, MAX = 18, idx = 0;
+    list.forEach(function (el) {
+      if (el.offsetParent === null) return; /* hidden (e.g. load-more gated) */
+      el.style.transition = 'none';
+      el.style.transform = '';
+      el.classList.remove('state-pop');
+      void el.offsetWidth; /* restart cleanly on rapid re-clicks */
+      el.style.setProperty('--pop-delay', (Math.min(idx, MAX) * STEP) + 'ms');
+      el.classList.add('state-pop');
+      idx++;
+      el.addEventListener('animationend', function onEnd(e) {
+        if (e.target !== el) return; /* ignore child animations */
+        el.removeEventListener('animationend', onEnd);
+        el.classList.remove('state-pop');
+        el.style.removeProperty('--pop-delay');
+        el.style.transition = '';
+      });
+    });
+  }
+  var shown = null; /* last state the user picked; null until first click */
+  function featuredFor(state) {
+    if (state === 'experiment') return original.filter(function (el) { return el.dataset.ptype === 'experiment'; });
+    return original.slice(); /* all work / previous identity: the whole feed */
+  }
+
   /* ---- State machine ---------------------------------------------- */
   var state = 'all';
   var unlocked = false;
@@ -1832,6 +1869,8 @@ a.pill.conf.title-bar > span { pointer-events: none; }
   var carousel = document.querySelector('.identity-carousel');
 
   function setState(next) {
+    var changed = next !== shown;
+    shown = next;
     state = next;
     /* Non-default states show the full archive (reordered/filtered),
        so reveal everything the load-more gates and hide its button. */
@@ -1853,6 +1892,7 @@ a.pill.conf.title-bar > span { pointer-events: none; }
     if (next === 'previousIdentity') { buildCarousel(); requestAnimationFrame(layout); }
     if (next === 'confidential') { applyConfSort(); } else { restoreConfOrder(); }
     reorder(orderFor(next));
+    if (changed && next !== 'confidential') popEntries(featuredFor(next));
   }
 
   /* ---- Password gate (soft, client-side) -------------------------- */
