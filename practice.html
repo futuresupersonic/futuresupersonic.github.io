@@ -425,6 +425,7 @@ body.show-extra-4 .feed-entry[data-extra="4"],
 body.show-extra-4 .conf-group[data-extra="4"] { display: flex; }
 
 .conf-group { display: flex; flex-direction: column; gap: var(--gap); }
+.conf-group.is-empty { display: none !important; }
 .conf-row { display: flex; gap: var(--gap); }
 .conf-row .pill:first-child { flex: 1 1 auto; }
 /* Title fills & truncates; year sits in a fixed lane, left-aligned, so every
@@ -437,6 +438,8 @@ body.show-extra-4 .conf-group[data-extra="4"] { display: flex; }
   padding-left: 0;
   margin-left: 12px;
 }
+.pill.conf-right .lock-ic { display: inline-block; width: 9px; height: 9px; margin-right: 6px; vertical-align: -1px;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 10'%3E%3Crect x='2' y='4.4' width='6' height='4.6' rx='.7' fill='%239e9e9e'/%3E%3Cpath d='M3.3 4.4V3.2a1.7 1.7 0 0 1 3.4 0v1.2' fill='none' stroke='%239e9e9e' stroke-width='1'/%3E%3C/svg%3E") center / contain no-repeat; }
 .conf-row .pill.conf-right {
   width: var(--w-cta);
   flex: 0 0 var(--w-cta);
@@ -891,13 +894,21 @@ a.pill.conf.title-bar > span { pointer-events: none; }
      year is pinned hard-right so every entry's year forms one clean
      vertical column regardless of name length. */
   .conf-row .pill:first-child .t-name { flex: 1 1 auto; min-width: 0; }
-  .conf-row .pill:first-child .t-year { flex: 0 0 auto; margin-left: auto; }
-  /* Append the suffix as a right-aligned segment within the same pill */
+  .conf-row .pill:first-child .t-year { flex: 0 0 8.6ch; width: 8.6ch; margin-left: 10px; text-align: left; white-space: nowrap; }
+  /* Append the suffix as a fixed-width, right-aligned lane so the year column
+     never shifts with the suffix length ("archived" vs "coming soon") */
   .conf-row .pill:first-child[data-suffix]::after {
     content: attr(data-suffix);
-    margin-left: 12px;
-    flex: 0 0 auto;
+    margin-left: 4px;
+    flex: 0 0 82px;
+    width: 82px;
+    box-sizing: border-box;
+    text-align: right;
     white-space: nowrap;
+  }
+  .conf-row .pill:first-child.has-lock[data-suffix]::after {
+    padding-left: 13px;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 10'%3E%3Crect x='2' y='4.4' width='6' height='4.6' rx='.7' fill='%232b1703'/%3E%3Cpath d='M3.3 4.4V3.2a1.7 1.7 0 0 1 3.4 0v1.2' fill='none' stroke='%232b1703' stroke-width='1'/%3E%3C/svg%3E") 12px 50% / 9px 9px no-repeat;
   }
   /* Hide the separate right-side confidential pill on mobile */
   .conf-row .pill.conf-right { display: none; }
@@ -1168,7 +1179,7 @@ a.pill.conf.title-bar > span { pointer-events: none; }
       <div class="conf-group" data-cat="work">
         <div class="conf-row">
           <a href="puma-hstreet.html" class="pill conf title-bar" style="color:rgb(43, 23, 3);padding-left:10px;padding-right:10px;text-decoration:none"><span class="t-name">Puma – H-STREET Activation</span><span class="t-year">2026</span></a>
-          <span class="pill conf conf-right" style="background:#FFFFFF;color:#9E9E9E">confidential</span>
+          <span class="pill conf conf-right" style="background:#FFFFFF;color:#9E9E9E" data-short="password"><span class="lock-ic" aria-hidden="true"></span>open with password</span>
         </div>
         <div class="conf-row">
           <span class="pill conf title-bar" style="color:rgb(43, 23, 3);padding-left:10px;padding-right:10px"><span class="t-name">109 Cinemas</span><span class="t-year">2025</span></span>
@@ -1250,7 +1261,7 @@ a.pill.conf.title-bar > span { pointer-events: none; }
       <div class="conf-group" data-cat="work" data-extra="1">
         <div class="conf-row">
           <a href="bandai-gundam.html" class="pill conf title-bar" style="color:rgb(43, 23, 3);padding-left:10px;padding-right:10px;text-decoration:none"><span class="t-name">Bandai Gundam – 米国</span><span class="t-year">2025</span></a>
-          <span class="pill conf conf-right" style="background:#FFFFFF;color:#9E9E9E">confidential</span>
+          <span class="pill conf conf-right" style="background:#FFFFFF;color:#9E9E9E" data-short="password"><span class="lock-ic" aria-hidden="true"></span>open with password</span>
         </div>
         <div class="conf-row">
           <span class="pill conf title-bar" style="color:rgb(43, 23, 3);padding-left:10px;padding-right:10px"><span class="t-name">P&amp;G Pantene Pro V China</span><span class="t-year">2024</span></span>
@@ -1301,7 +1312,7 @@ a.pill.conf.title-bar > span { pointer-events: none; }
       <div class="conf-group" data-cat="work" data-extra="1">
         <div class="conf-row">
           <a href="meiji-digital-experience.html" class="pill conf title-bar" style="color:rgb(43, 23, 3);padding-left:10px;padding-right:10px;text-decoration:none"><span class="t-name">Meiji Almond and Macadamia Digital Experience</span><span class="t-year">2023/2024</span></a>
-          <span class="pill conf conf-right" style="background:#FFFFFF;color:#9E9E9E">confidential</span>
+          <span class="pill conf conf-right" style="background:#FFFFFF;color:#9E9E9E" data-short="password"><span class="lock-ic" aria-hidden="true"></span>open with password</span>
         </div>
         <div class="conf-row">
           <span class="pill conf title-bar" style="color:rgb(43, 23, 3);padding-left:10px;padding-right:10px"><span class="t-name">Meiji Meltykiss USA</span><span class="t-year">2023</span></span>
@@ -1345,7 +1356,7 @@ a.pill.conf.title-bar > span { pointer-events: none; }
         </div>
         <div class="conf-row">
           <a href="qr-de-kessai.html" class="pill conf title-bar" style="color:rgb(43, 23, 3);padding-left:10px;padding-right:10px;text-decoration:none"><span class="t-name">QRで決済 Coca-Cola Japan</span><span class="t-year">2022</span></a>
-          <span class="pill conf conf-right" style="background:#FFFFFF;color:#9E9E9E">confidential</span>
+          <span class="pill conf conf-right" style="background:#FFFFFF;color:#9E9E9E" data-short="password"><span class="lock-ic" aria-hidden="true"></span>open with password</span>
         </div>
       </div>
 
@@ -1360,7 +1371,7 @@ a.pill.conf.title-bar > span { pointer-events: none; }
       <!-- [24] Field Management -->
       <div class="feed-entry" data-cat="work" data-extra="1" style="animation-delay:80ms">
         <div class="tag-row work">
-          <span class="pill title-bar no-hover" style="color:#E6E6E6">
+          <span class="pill title-bar no-hover">
             <span class="t-name">Field Management</span>
             <span class="t-year">2021</span>
           </span>
@@ -1636,7 +1647,8 @@ a.pill.conf.title-bar > span { pointer-events: none; }
     const left  = row.querySelector('.pill:first-child');
     const right = row.querySelector('.pill.conf-right');
     if (left && right) {
-      left.setAttribute('data-suffix', right.textContent.trim());
+      left.setAttribute('data-suffix', right.dataset.short || right.textContent.trim());
+      if (right.dataset.short) left.classList.add('has-lock');
     }
   });
 
@@ -1746,7 +1758,7 @@ a.pill.conf.title-bar > span { pointer-events: none; }
   });
   var confSorted = false;
   function statusRank(row) {
-    var rank = { 'confidential': 0, 'coming soon': 1, 'unavailable': 2, 'archived': 3 };
+    var rank = { 'confidential': 0, 'open with password': 0, 'coming soon': 1, 'unavailable': 2, 'archived': 3 };
     var badge = row.querySelector('.pill.conf-right');
     var txt = badge ? badge.textContent.trim().toLowerCase() : '';
     return (txt in rank) ? rank[txt] : 99;
@@ -1757,6 +1769,9 @@ a.pill.conf.title-bar > span { pointer-events: none; }
       .map(function (h, i) { return { r: h.row, k: statusRank(h.row), i: i }; })
       .sort(function (a, b) { return a.k - b.k || a.i - b.i; });
     ordered.forEach(function (o) { confGroups[0].appendChild(o.r); });
+    /* the groups the rows came from are now empty: take them out of the flow
+       so they don't leave a tall blank gap before the next entry */
+    confGroups.forEach(function (g) { if (!g.querySelector('.conf-row')) g.classList.add('is-empty'); });
     if (!reduce) {
       var STEP = 55, MAX = 18; /* cap the cascade so long lists don't drag */
       ordered.forEach(function (o, idx) {
@@ -1776,6 +1791,7 @@ a.pill.conf.title-bar > span { pointer-events: none; }
   }
   function restoreConfOrder() {
     if (!confSorted) return;
+    confGroups.forEach(function (g) { g.classList.remove('is-empty'); });
     confHome.forEach(function (h) {
       h.row.classList.remove('conf-pop');
       h.row.style.removeProperty('--pop-delay');
