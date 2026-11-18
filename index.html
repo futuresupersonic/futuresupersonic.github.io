@@ -292,6 +292,7 @@ button { font: inherit; color: inherit; background: none; border: none; cursor: 
   background: radial-gradient(ellipse at center,
     rgba(196,150,40,0.30) 0%, rgba(120,86,20,0.12) 46%, transparent 74%);
 }
+.anchor-canvas.tall { top: -124%; height: 238%; }   /* headroom above the rock for the flower */
 .anchor-canvas {
   position: absolute;
   inset: -14%;                 /* bleed past the box so soft edges + rim aren't clipped */
@@ -4446,7 +4447,7 @@ a.cvp-proj:hover { background: #f0ecec; }
     if (!THREE || !THREE.GLTFLoader || !anchorEl || !universeEl) return;  // fallback → pill
 
     var canvas = document.createElement('canvas');
-    canvas.className = 'anchor-canvas';
+    canvas.className = 'anchor-canvas tall';
     canvas.style.opacity = '0';
     canvas.style.transition = 'opacity 600ms ease';
 
@@ -4454,6 +4455,7 @@ a.cvp-proj:hover { background: #f0ecec; }
     try { renderer = new THREE.WebGLRenderer({ canvas: canvas, alpha: true, antialias: true }); }
     catch (e) { return; }
     renderer.setClearColor(0x000000, 0);
+    renderer.shadowMap.enabled = true; renderer.shadowMap.type = THREE.PCFSoftShadowMap;
     renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
     if (THREE.sRGBEncoding) renderer.outputEncoding = THREE.sRGBEncoding;
     if (THREE.ACESFilmicToneMapping) { renderer.toneMapping = THREE.ACESFilmicToneMapping; renderer.toneMappingExposure = 1.04; }
@@ -4490,10 +4492,13 @@ a.cvp-proj:hover { background: #f0ecec; }
     var BASE_TILT = -0.12;
 
     // ---- lights -----------------------------------------------------------
-    var ambient = new THREE.AmbientLight(0xffffff, 0.5);
+    var ambient = new THREE.AmbientLight(0xffffff, 0.3);
     var key  = new THREE.DirectionalLight(0xfff2e2, 1.35); key.position.set(-3, 5, 3.6);
     var rim  = new THREE.DirectionalLight(0xffffff, 0.8);  rim.position.set(2.4, 3, -5);
     var fill = new THREE.DirectionalLight(0xdce6f2, 0.18); fill.position.set(3.6, -2.4, 1.6);
+    key.castShadow = true; key.shadow.mapSize.set(1024, 1024);
+    var sc = key.shadow.camera; sc.left = -2.2; sc.right = 2.2; sc.top = 2.6; sc.bottom = -1.8; sc.near = 1; sc.far = 16;
+    key.shadow.bias = -0.0006; key.shadow.normalBias = 0.025; key.shadow.radius = 3;
     scene.add(ambient, key, rim, fill);
 
     // ---- BENJAMIN — clean billboarded wordmark (placeholder) --------------
@@ -4526,6 +4531,7 @@ a.cvp-proj:hover { background: #f0ecec; }
     anchorEl.addEventListener('mouseleave', function(){ hoverT=0; });
     new MutationObserver(function(){
       var open = universeEl.classList.contains('is-universe-open');
+      if (open) bloom();
       activeT = open ? 1 : 0; anchorEl.classList.toggle('is-active', open);
     }).observe(universeEl, { attributes:true, attributeFilter:['class'] });
 
@@ -4533,7 +4539,12 @@ a.cvp-proj:hover { background: #f0ecec; }
     function resize() {
       var w = canvas.clientWidth, h = canvas.clientHeight;
       if (!w || !h) { var s=(anchorEl.clientWidth||130)*1.28; w=s; h=s; }
-      renderer.setSize(w, h, false); camera.aspect=w/h; camera.updateProjectionMatrix();
+      renderer.setSize(w, h, false); camera.aspect=w/h;
+      var r = h / w, t15 = Math.tan(15 * Math.PI / 180), tf = t15 * r;
+      camera.fov = 2 * Math.atan(tf) * 180 / Math.PI;
+      var dy = 4.6 * (tf - t15);
+      camera.position.set(0, 0.2 + dy, 4.6); camera.lookAt(0, dy, 0);
+      camera.updateProjectionMatrix();
     }
     if (window.ResizeObserver) new ResizeObserver(resize).observe(anchorEl);
     else window.addEventListener('resize', resize);
@@ -4544,6 +4555,13 @@ a.cvp-proj:hover { background: #f0ecec; }
       return { rx: mx?parseFloat(mx[1]):0, ry: my?parseFloat(my[1]):0 }; }
 
     // ---- load the rock, then start ----------------------------------------
+    var FL = { mixer: null, actions: [], sway: [], bloomed: false, t: 0, dur: 2 };
+    var _qs = new THREE.Quaternion(), _es = new THREE.Euler();
+    function bloom() {
+      if (FL.bloomed || !FL.mixer) return;
+      FL.bloomed = true;                      // plays once per page load
+      FL.actions.forEach(function (a) { a.reset(); a.paused = false; a.play(); });
+    }
     var rockMats = [], started = false, spin = 0, last = performance.now(), running = true, DEG = Math.PI/180;
     function lerp(a,b,t){ return a+(b-a)*t; }
 
@@ -4557,17 +4575,39 @@ a.cvp-proj:hover { background: #f0ecec; }
     // drift back to neutral when cursor leaves the window
     document.addEventListener('mouseleave', function() { cxT = 0; cyT = 0; });
 
-    new THREE.GLTFLoader().load('./rock.glb', function (gltf) {
+    new THREE.GLTFLoader().load('./flowerrock.glb', function (gltf) {
       var rock = gltf.scene;
       obj.add(rock);
-      // normalize: fit to unit-ish size and recenter at origin
-      var box = new THREE.Box3().setFromObject(rock), size = new THREE.Vector3(), ctr = new THREE.Vector3();
+      // normalize on the ROCK only (the flower grows above it), same size as before
+      var rockOnly = rock.getObjectByName('W_Rock') || rock;
+      var box = new THREE.Box3().setFromObject(rockOnly), size = new THREE.Vector3(), ctr = new THREE.Vector3();
       box.getSize(size);
       var kfit = 1.85 / Math.max(size.x, size.y, size.z);
       rock.scale.setScalar(kfit);
-      box.setFromObject(rock); box.getCenter(ctr); rock.position.sub(ctr);
-      // collect materials (for the active "powered-on" warmth) + tune env
+      box.setFromObject(rockOnly); box.getCenter(ctr); rock.position.sub(ctr);
+      // bloom: every clip once, held on its last frame; posed closed until the first click
+      FL.mixer = new THREE.AnimationMixer(rock);
+      FL.actions = gltf.animations.map(function (c) {
+        var a = FL.mixer.clipAction(c); a.setLoop(THREE.LoopOnce, 1); a.clampWhenFinished = true; a.play(); a.paused = true; a.time = 0; return a;
+      });
+      FL.mixer.update(0);
+      FL.dur = Math.max.apply(null, gltf.animations.map(function (c) { return c.duration; }).concat([0.1]));
+      // sway set: grasses tagged "Sway", the bud pivots and the flower stem
       rock.traverse(function (o) {
+        if (/Sway/.test(o.name) || /^Bud_.*_Pivot$/.test(o.name) || o.name === 'Flower_Root') {
+          FL.sway.push({ o: o, q0: o.quaternion.clone(), anim: /Pivot|Flower_Root/.test(o.name),
+            ph: Math.random() * 6.28, sp: 0.7 + Math.random() * 0.5, amp: (/Sway/.test(o.name) ? 2.6 : 1.4) * Math.PI / 180 });
+        }
+      });
+      rock.traverse(function (o) {
+        if (!o.isMesh || !o.material) return;
+        var m = o.material;
+        if (m.name === 'VEG_RedPetal') { m.color.setRGB(0.66, 0.035, 0.022); m.emissive = new THREE.Color(0x3a0000); m.emissiveIntensity = 0.35; m.side = THREE.DoubleSide; }
+        o.castShadow = true; o.receiveShadow = true;
+        if (m.name === 'W_Boulder') { m.color.setScalar(1.6); if (m.normalScale) m.normalScale.set(0.6, 0.6); }
+      });
+      // collect materials (for the active "powered-on" warmth) + tune env
+      rockOnly.traverse(function (o) {
         if (o.isMesh && o.material) {
           var mm = Array.isArray(o.material) ? o.material : [o.material];
           mm.forEach(function (m) {
@@ -4609,20 +4649,33 @@ a.cvp-proj:hover { background: #f0ecec; }
       // is layered on top and fades out with couple so it disappears when universe opens
       var couple = 1 - active;
       uni.rotation.set(0,0,0);
-      uni.rotateX((a.rx + cx) * DEG * couple);
-      uni.rotateY((a.ry + cy) * DEG * couple);
+      uni.rotateX((a.rx + cx * couple) * DEG);
+      uni.rotateY((a.ry + cy * couple) * DEG);
 
       spin += dt * 0.3 * couple;                  // gentle idle turntable (jagged form makes it read)
       obj.rotation.set(BASE_TILT, spin, 0);
+      if (FL.mixer) {
+        FL.mixer.update(dt); FL.t += dt;
+        // gentle sway; the bloom-animated pieces only start swaying once they've opened
+        var settle = FL.bloomed ? 1 : 0;
+        for (var si = 0; si < FL.sway.length; si++) {
+          var S = FL.sway[si], k = S.anim ? settle : 1;
+          if (!k) continue;
+          _es.set(Math.sin(FL.t * S.sp + S.ph) * S.amp * k, 0, Math.cos(FL.t * S.sp * 0.8 + S.ph) * S.amp * 0.6 * k);
+          _qs.setFromEuler(_es);
+          if (!S.anim) S.o.quaternion.copy(S.q0);
+          S.o.quaternion.multiply(_qs);
+        }
+      }
 
       uni.scale.setScalar(1 + hover*0.05 + active*0.025);
 
       key.intensity = 1.35 + hover*0.3 + active*0.25;
       rim.intensity = 0.80 + hover*0.15 + active*0.3;
-      ambient.intensity = 0.5 + active*0.08;
+      ambient.intensity = 0.3 + active*0.06;
       for (var i=0;i<rockMats.length;i++){
         var m = rockMats[i];
-        if ('emissiveIntensity' in m) m.emissiveIntensity = active*0.32 + hover*0.08;
+        if ('emissiveIntensity' in m) m.emissiveIntensity = active*0.06 + hover*0.03;
         if ('envMapIntensity' in m) m.envMapIntensity = 1.15 + hover*0.2 + active*0.2;
       }
 
