@@ -4593,9 +4593,11 @@ a.cvp-proj:hover { background: #f0ecec; }
       FL.mixer.update(0);
       FL.dur = Math.max.apply(null, gltf.animations.map(function (c) { return c.duration; }).concat([0.1]));
       // sway set: grasses tagged "Sway", the bud pivots and the flower stem
+      var rotDriven = {};   // nodes whose rotation the bloom animation sets every frame
+      gltf.animations.forEach(function (c) { c.tracks.forEach(function (t) { if (/\.quaternion$/.test(t.name)) rotDriven[t.name.split('.')[0]] = 1; }); });
       rock.traverse(function (o) {
         if (/Sway/.test(o.name) || /^Bud_.*_Pivot$/.test(o.name) || o.name === 'Flower_Root') {
-          FL.sway.push({ o: o, q0: o.quaternion.clone(), anim: /Pivot|Flower_Root/.test(o.name),
+          FL.sway.push({ o: o, q0: o.quaternion.clone(), anim: /Pivot|Flower_Root/.test(o.name), rot: !!rotDriven[o.name],
             ph: Math.random() * 6.28, sp: 0.7 + Math.random() * 0.5, amp: (/Sway/.test(o.name) ? 2.6 : 1.4) * Math.PI / 180 });
         }
       });
@@ -4663,7 +4665,7 @@ a.cvp-proj:hover { background: #f0ecec; }
           if (!k) continue;
           _es.set(Math.sin(FL.t * S.sp + S.ph) * S.amp * k, 0, Math.cos(FL.t * S.sp * 0.8 + S.ph) * S.amp * 0.6 * k);
           _qs.setFromEuler(_es);
-          if (!S.anim) S.o.quaternion.copy(S.q0);
+          if (!S.rot) S.o.quaternion.copy(S.q0);   // sway around the rest pose, never accumulate
           S.o.quaternion.multiply(_qs);
         }
       }
