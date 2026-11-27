@@ -2177,7 +2177,7 @@ a.cvp-proj:hover { background: #f0ecec; }
   const NODES = [
     // Primary nodes
     { id: 'practice',  label: 'practice',            children: ['all work', 'public work', 'confidential work 🔒', 'experiments', 'previous identities'] },
-    { id: 'fss',       label: 'futuresupersonic',    children: ['independent creative practice', 'SUZURI', 'publications', 'objects', 'future projects'] },
+    { id: 'fss',       label: 'futuresupersonic',    children: ['independent creative practice', 'kanji map', 'SUZURI', 'publications', 'objects', 'future projects'] },
     { id: 'designer',  label: 'conceptual designer', children: ['systems thinking', 'behavioral design', 'concept design', 'industrial design', 'experience strategy'] },
     { id: 'cv',        label: 'cv / resume',         children: ['experience', 'selected work', 'education', 'tools'] },
     // Personal / playful / standalone
@@ -2639,6 +2639,9 @@ a.cvp-proj:hover { background: #f0ecec; }
           openConfModal();
           return;
         }
+        // project leaves (go: true) open the project itself
+        const leafMeta = ITEM_META[c.node.parentId] && ITEM_META[c.node.parentId][c.node.label];
+        if (leafMeta && leafMeta.go) { window.location.href = leafMeta.href; return; }
         openLeafCard(c.node);
       };
       activeChildren.push(c);
@@ -2827,6 +2830,7 @@ a.cvp-proj:hover { background: #f0ecec; }
     },
     fss: {
       'independent creative practice': { desc: 'Self-directed creative work under the futuresupersonic name.' },
+      'kanji map':     { desc: 'A free learning tool for every JLPT kanji, N5 to N1 — component mind maps, graded reading, reviews and mock exams.', href: '/kanji-map/', go: true },
       'SUZURI':        { desc: 'Print-on-demand objects and apparel.', href: 'https://suzuri.jp' },
       'publications':  { desc: 'Zines, printed matter, and editorial work.' },
       'objects':       { desc: 'Physical things that carry ideas.' },
@@ -2866,7 +2870,7 @@ a.cvp-proj:hover { background: #f0ecec; }
     const meta = (ITEM_META[id] && ITEM_META[id][label]) || null;
     const desc = (meta && meta.desc) ? `<span class="ref-desc">${meta.desc}</span>` : '';
     const name = (meta && meta.href)
-      ? `<a class="ref-link" href="${meta.href}" target="_blank" rel="noopener">${label}</a>`
+      ? `<a class="ref-link" href="${meta.href}"${meta.go ? '' : ' target="_blank" rel="noopener"'}>${label}${meta.go ? ' →' : ''}</a>`
       : `<span class="ref-name">${label}</span>`;
     return `<div class="ref-row">${name}${desc}</div>`;
   }
