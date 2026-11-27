@@ -687,6 +687,7 @@ button { font: inherit; color: inherit; background: none; border: none; cursor: 
   display: block; width: 100%; aspect-ratio: 16 / 10;
   object-fit: cover; border-radius: 10px; background: #eeeeee;
 }
+.leaf-img.is-contain { object-fit: contain; background: #ffffff; padding: 16% 24%; box-shadow: inset 0 0 0 1px rgba(43,23,3,0.08); }
 .leaf-credit {
   font-size: 10.5px; line-height: 1.35; color: rgba(43,23,3,0.4);
   padding: 6px 10px 0;
@@ -3001,7 +3002,7 @@ a.cvp-proj:hover { background: #f0ecec; }
       'Y2K': { m: 'Aesthetic · late 1990s–early 2000s', b: `Translucent plastics, chrome, blobs and a lot of optimism about the digital future. It was the visual language of the years I started studying design.` },
       'Senseware': { m: 'Exhibition · Kenya Hara, 2007 and 2009', b: `Kenya Hara's TOKYO FIBER exhibitions on synthetic fibres, shown in Tokyo, Milan and beyond. Hara used the word for any material that stirs the senses and makes you want to make something.` },
       'Totemic design': { m: 'Idea', b: `Objects that hold meaning for a group: totems, mascots, marks, signs. I am interested in how a designed form becomes a symbol people gather around.` },
-      'Brian Jungen': { m: 'Artist · b. 1970', b: [`A Canadian artist of Dane-zaa and Swiss descent. His Prototypes for New Understanding (1998–2005) cut apart Nike Air Jordans and rebuilt them as Northwest Coast-style masks, colliding consumer culture with Indigenous form.`, `Pictured: Couch Monster (2022), a towering creature he built from cut-up leather couches.`] },
+      'Brian Jungen': { m: 'Artist · b. 1970', b: `A Canadian artist of Dane-zaa and Swiss descent. His Prototypes for New Understanding (1998–2005) cut apart Nike Air Jordans and rebuilt them as Northwest Coast-style masks, colliding consumer culture with Indigenous form.` },
       'Steve Jobs': { m: 'Apple co-founder · 1955–2011', b: `Less the person than the insistence that technology should feel human, and that the parts nobody sees still matter.` },
     },
     obsess: {
@@ -3045,7 +3046,6 @@ a.cvp-proj:hover { background: #f0ecec; }
     'practice:public work':         ['images/tfg-onomichi-retailfront/tfg-photo-facade.jpg'],
     'practice:experiments':         ['images/moving-bench-hero.jpg'],
     'practice:previous identities': ['images/tsuneishi-illustrations-book.jpg'],
-    'fss:independent creative practice': ['images/fss-tees-1.jpg'],
     'fss:SUZURI':                   ['images/fss-tees-3.jpg'],
     'fss:objects':                  ['images/mlc-hero.jpg'],
     'fss:future projects':          ['images/mb-spatial.jpg'],
@@ -3056,12 +3056,8 @@ a.cvp-proj:hover { background: #f0ecec; }
     'designer:industrial design':   [WC + 'f/fa/Tesla_Model_S_clay.jpg/960px-Tesla_Model_S_clay.jpg', 'Steve Jurvetson · CC BY 2.0', 'https://commons.wikimedia.org/wiki/File:Tesla_Model_S_clay.jpg'],
     'designer:experience strategy': [WC + '7/7b/Matsuoka_corridor_ac_%286%29.jpg/960px-Matsuoka_corridor_ac_%286%29.jpg', 'Asturio Cantabrio · CC BY-SA 4.0', 'https://commons.wikimedia.org/wiki/File:Matsuoka_corridor_ac_(6).jpg'],
     // books (subject references, not covers)
-    'books:The Tipping Point':      [WC + '2/25/Dominoes_falling.jpg/960px-Dominoes_falling.jpg', 'Kurt:S · CC BY 2.0', 'https://commons.wikimedia.org/wiki/File:Dominoes_falling.jpg'],
     'books:Outliers':               [WC + '5/57/Ice_hockey_stick_and_puck_20181220.jpg/960px-Ice_hockey_stick_and_puck_20181220.jpg', 'Santeri Viinamäki · CC BY-SA 4.0', 'https://commons.wikimedia.org/wiki/File:Ice_hockey_stick_and_puck_20181220.jpg'],
-    'books:The Death and Life of Great American Cities': [WC + 'b/b2/12th_St_Hudson_St_td_%282019-01-08%29_04_-_Balaboosta_%28611_Hudson_Street%29.jpg/960px-12th_St_Hudson_St_td_%282019-01-08%29_04_-_Balaboosta_%28611_Hudson_Street%29.jpg', 'Hudson Street, West Village · Tdorante10 · CC BY-SA 4.0', 'https://commons.wikimedia.org/wiki/File:12th_St_Hudson_St_td_(2019-01-08)_04_-_Balaboosta_(611_Hudson_Street).jpg'],
     'books:Cradle to Cradle':       [WC + 'd/da/Industrial_sedum_green_roof_installed_above_the_Javits_Center.jpg/960px-Industrial_sedum_green_roof_installed_above_the_Javits_Center.jpg', 'Oleg Yunakov · CC BY-SA 4.0', 'https://commons.wikimedia.org/wiki/File:Industrial_sedum_green_roof_installed_above_the_Javits_Center.jpg'],
-    'books:The Internet of Things': [WC + '7/74/Arduino_Uno_dllu.jpg/960px-Arduino_Uno_dllu.jpg', 'Dllu · CC BY-SA 4.0', 'https://commons.wikimedia.org/wiki/File:Arduino_Uno_dllu.jpg'],
-    'books:Logo Modernism':         [WC + '8/87/Wood_letterpress_type.jpg/960px-Wood_letterpress_type.jpg', 'Michellecornelison · CC BY-SA 4.0', 'https://commons.wikimedia.org/wiki/File:Wood_letterpress_type.jpg'],
     // films (places and objects from their worlds, not stills)
     'films:Akira':                  [WC + 'd/dc/Colorful_neon_street_signs_in_Kabukich%C5%8D%2C_Shinjuku%2C_Tokyo.jpg/960px-Colorful_neon_street_signs_in_Kabukich%C5%8D%2C_Shinjuku%2C_Tokyo.jpg', 'Kabukichō, Shinjuku · Basile Morin · CC BY-SA 4.0', 'https://commons.wikimedia.org/wiki/File:Colorful_neon_street_signs_in_Kabukich%C5%8D,_Shinjuku,_Tokyo.jpg'],
     'films:Boyz n the Hood':        [WC + '7/7f/Looking_north_on_Crenshaw_from_1100_S.jpg/960px-Looking_north_on_Crenshaw_from_1100_S.jpg', 'Crenshaw, Los Angeles · Downtowngal · CC BY-SA 4.0', 'https://commons.wikimedia.org/wiki/File:Looking_north_on_Crenshaw_from_1100_S.jpg'],
@@ -3074,21 +3070,13 @@ a.cvp-proj:hover { background: #f0ecec; }
     'films:Alphaville':             [WC + '3/37/GD-FR-Paris-Maison_de_la_Radio.jpg/960px-GD-FR-Paris-Maison_de_la_Radio.jpg', 'Maison de la Radio, Paris · CC BY-SA 2.5', 'https://commons.wikimedia.org/wiki/File:GD-FR-Paris-Maison_de_la_Radio.jpg'],
     'films:Objectified':            [WC + 'e/ed/WE500dialphone.jpg/960px-WE500dialphone.jpg', 'Western Electric 500 · public domain', 'https://commons.wikimedia.org/wiki/File:WE500dialphone.jpg'],
     // design references
-    'refs:Ten Principles for Good Design': [WC + '8/8c/1956_Braun_Phonosuper_SK4_Schneewittchensarg.JPG/960px-1956_Braun_Phonosuper_SK4_Schneewittchensarg.JPG', 'Braun SK 4 · Alf van Beem · CC0', 'https://commons.wikimedia.org/wiki/File:1956_Braun_Phonosuper_SK4_Schneewittchensarg.JPG'],
     'refs:Design’s Role in Sustainable Consumption': [WC + 'd/d3/Repair_Lab_%2848115819418%29.jpg/960px-Repair_Lab_%2848115819418%29.jpg', 'Redaktion NdW · CC BY 2.0', 'https://commons.wikimedia.org/wiki/File:Repair_Lab_(48115819418).jpg'],
     'refs:Design Ah! / デザインあ': [WC + 'f/f1/Bento_2017_%2839224668032%29.jpg/960px-Bento_2017_%2839224668032%29.jpg', 'Hajime Nakano · CC BY 2.0', 'https://commons.wikimedia.org/wiki/File:Bento_2017_(39224668032).jpg'],
     'refs:Visual Complexity':       [WC + 'd/d2/Internet_map_1024.jpg/960px-Internet_map_1024.jpg', 'The Opte Project · CC BY 2.5', 'https://commons.wikimedia.org/wiki/File:Internet_map_1024.jpg'],
     'refs:GSAP':                    ['https://gsap.com/GSAP-share-image.png', 'Image: gsap.com'],
     'refs:Mobbin':                  ['https://mobbin.com/mobbin-marketing-pages/images/og/mobbin.png', 'Image: mobbin.com'],
     // influences (their work, not portraits)
-    'influence:Ryuichi Sakamoto':   [WC + '4/42/Prophet-5_-_Wright_-_The_Wall.jpg/960px-Prophet-5_-_Wright_-_The_Wall.jpg', 'Prophet-5 synthesizer · Michele Brina · CC BY-SA 4.0', 'https://commons.wikimedia.org/wiki/File:Prophet-5_-_Wright_-_The_Wall.jpg'],
-    'influence:Dieter Rams':        [WC + 'd/dc/606-Universal-Shelving-System.jpg/960px-606-Universal-Shelving-System.jpg', '606 Universal Shelving System · Vitsœ · CC BY-SA 3.0', 'https://commons.wikimedia.org/wiki/File:606-Universal-Shelving-System.jpg'],
     'influence:Ross Lovegrove':     [WC + 'f/f4/Lasvit_Pavillon_by_Ross_Lovegrove_%282012%29.jpg/960px-Lasvit_Pavillon_by_Ross_Lovegrove_%282012%29.jpg', 'Lasvit pavilion, 2012 · tongeron91 · CC BY-SA 2.0', 'https://commons.wikimedia.org/wiki/File:Lasvit_Pavillon_by_Ross_Lovegrove_(2012).jpg'],
-    'influence:Y2K':                [WC + 'd/db/IMac_G3_Bondi_Blue%2C_three-quarters_view.png/960px-IMac_G3_Bondi_Blue%2C_three-quarters_view.png', 'iMac G3 · David Fuchs after Rama · CC BY-SA 4.0', 'https://commons.wikimedia.org/wiki/File:IMac_G3_Bondi_Blue,_three-quarters_view.png'],
-    'influence:Senseware':          [WC + '6/66/Propagation_of_light_through_the_core_of_an_optical_fiber._Macro_visualization..JPG/960px-Propagation_of_light_through_the_core_of_an_optical_fiber._Macro_visualization..JPG', 'AZToshkov · CC BY-SA 3.0', 'https://commons.wikimedia.org/wiki/File:Propagation_of_light_through_the_core_of_an_optical_fiber._Macro_visualization..JPG'],
-    'influence:Totemic design':     [WC + 'f/f8/Totem_poles_in_Vancouver_Stanley_Park_%2829785578537%29.jpg/960px-Totem_poles_in_Vancouver_Stanley_Park_%2829785578537%29.jpg', 'Stanley Park, Vancouver · dronepicr · CC BY 2.0', 'https://commons.wikimedia.org/wiki/File:Totem_poles_in_Vancouver_Stanley_Park_(29785578537).jpg'],
-    'influence:Brian Jungen':       [WC + '4/4e/Couch_Monster_by_Brian_Jungen_03.jpg/960px-Couch_Monster_by_Brian_Jungen_03.jpg', 'Couch Monster · Maksim Sokolov · CC BY-SA 4.0', 'https://commons.wikimedia.org/wiki/File:Couch_Monster_by_Brian_Jungen_03.jpg'],
-    'influence:Steve Jobs':         [WC + '7/79/Computer_macintosh_128k%2C_1984_%28all_about_Apple_onlus%29.jpg/960px-Computer_macintosh_128k%2C_1984_%28all_about_Apple_onlus%29.jpg', 'Macintosh 128K · Sailko · CC BY 3.0', 'https://commons.wikimedia.org/wiki/File:Computer_macintosh_128k,_1984_(all_about_Apple_onlus).jpg'],
     // weird obsessions
     'obsess:Toques':                [WC + '6/61/Tuque.jpg/960px-Tuque.jpg', 'Rathernotto · CC BY-SA 4.0', 'https://commons.wikimedia.org/wiki/File:Tuque.jpg'],
     'obsess:Behavioral systems':    [WC + 'a/a6/Urinal_Fly.JPG/960px-Urinal_Fly.JPG', 'The urinal fly nudge · Gustav Broennimann · CC BY 3.0', 'https://commons.wikimedia.org/wiki/File:Urinal_Fly.JPG'],
@@ -3096,15 +3084,15 @@ a.cvp-proj:hover { background: #f0ecec; }
     'obsess:Cultural semiotics':    [WC + 'd/d3/Examples_of_Japanese_road_signs_indicating_a_%22melody_road%22.png/960px-Examples_of_Japanese_road_signs_indicating_a_%22melody_road%22.png', 'Japanese melody road signs · CC0', 'https://commons.wikimedia.org/wiki/File:Examples_of_Japanese_road_signs_indicating_a_%22melody_road%22.png'],
     'obsess:Informational mapping': [WC + '2/29/Minard.png/960px-Minard.png', 'Charles Minard, 1869 · public domain', 'https://commons.wikimedia.org/wiki/File:Minard.png'],
     // internet artifacts (each site's own share image)
-    'artifacts:Getty':              ['https://media.getty.edu/iiif/image/44b3d73a-1e3c-4d33-8606-115b228b71f0/0,80,3000,1571/1500,785/0/default.jpg', 'Image: getty.edu'],
     'artifacts:Sculpting Harmony':  ['https://gehry.getty.edu/storyblok/cache/assets/getty-share-11647009.png', 'Image: gehry.getty.edu'],
     'artifacts:Radio Garden':       ['https://radio.garden/public/icons/rg-facebook-1.jpg', 'Image: radio.garden'],
+    'artifacts:PingMag':            ['https://web.archive.org/web/20080306091751im_/http://pingmag.jp/pingmag-en/wp-content/themes/pingmag2/images/pingmakelogo_small.gif', 'Image: PingMag via the Internet Archive, 2008', 'https://web.archive.org/web/20080306091751/http://www.pingmag.jp/', 'contain'],
     'artifacts:My 80’s TV':    ['https://www.myretrotvs.com/share-logo-v3.png', 'Image: myretrotvs.com'],
   };
   function leafImg(pid, label) {
     const row = LEAF_IMG[pid + ':' + label];
     const data = (LEAF[pid] && LEAF[pid][label]) || {};
-    if (row) return { src: row[0], credit: row[1] || '', creditUrl: row[2] || '' };
+    if (row) return { src: row[0], credit: row[1] || '', creditUrl: row[2] || '', fit: row[3] || '' };
     if (data.img) return { src: data.img, credit: '', creditUrl: '' };
     return null;
   }
@@ -3605,7 +3593,7 @@ a.cvp-proj:hover { background: #f0ecec; }
     const im = leafImg(pid, label);
     const plate = plateFor(pid, label);
     const visual = im
-      ? `<figure class="leaf-fig"><img class="leaf-img" src="${im.src}" alt="${label}" loading="lazy" referrerpolicy="no-referrer" data-fallback="1">${im.credit ? `<figcaption class="leaf-credit">${im.creditUrl ? `<a href="${im.creditUrl}" target="_blank" rel="noopener">${im.credit}</a>` : im.credit}</figcaption>` : ''}</figure><template class="leaf-plate-fallback">${plate}</template>`
+      ? `<figure class="leaf-fig"><img class="leaf-img${im.fit === 'contain' ? ' is-contain' : ''}" src="${im.src}" alt="${label}" loading="lazy" referrerpolicy="no-referrer" data-fallback="1">${im.credit ? `<figcaption class="leaf-credit">${im.creditUrl ? `<a href="${im.creditUrl}" target="_blank" rel="noopener">${im.credit}</a>` : im.credit}</figcaption>` : ''}</figure><template class="leaf-plate-fallback">${plate}</template>`
       : plate;
     const paras = Array.isArray(data.b) ? data.b : (data.b ? [data.b] : (meta.desc ? [meta.desc] : []));
     const isNote = pid === 'notes';
