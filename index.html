@@ -659,6 +659,63 @@ button { font: inherit; color: inherit; background: none; border: none; cursor: 
   font-style: italic;
 }
 
+/* ---- Leaf cards: one focused card per child node ----
+   Visual = generated plate (default) or a real image (LEAF[..].img).
+   Swap a plate for a photo by adding img: 'images/nodes/<file>.jpg'. */
+.leaf-card { padding: 12px 12px 20px; }
+.leaf-card.is-bare { padding-bottom: 12px; }
+.leaf-card .leaf-body { padding: 16px 10px 0; }
+.leaf-card .leaf-meta {
+  font-size: 11.5px;
+  letter-spacing: 0.01em;
+  color: rgba(43,23,3,0.45);
+  margin: 0 0 6px;
+}
+.leaf-card .ct { margin-bottom: 8px; }
+.leaf-card .cb p + p { margin-top: 8px; }
+.leaf-card .leaf-link {
+  display: inline-flex; align-items: center; gap: 6px;
+  margin-top: 14px; height: 25px; padding: 0 12px;
+  border-radius: var(--radius, 45px);
+  background: #eeeeee; color: var(--ink);
+  font-size: 12px; text-decoration: none; border: 0;
+  transition: background-color 180ms;
+}
+.leaf-card .leaf-link:hover { background: var(--accent, #b7ff00); }
+.leaf-img {
+  display: block; width: 100%; aspect-ratio: 16 / 10;
+  object-fit: cover; border-radius: 10px; background: #eeeeee;
+}
+.leaf-plate {
+  --pf: rgb(43,23,3);
+  --pb: #eeeeee;
+  position: relative; overflow: hidden;
+  aspect-ratio: 16 / 10; border-radius: 10px;
+  background: var(--pb); color: var(--pf);
+  padding: 14px 16px;
+  display: flex; flex-direction: column; justify-content: space-between;
+}
+.leaf-plate .lp-top {
+  position: relative; z-index: 1;
+  display: flex; justify-content: space-between;
+  font-size: 11px; letter-spacing: 0.02em; opacity: 0.6;
+}
+.leaf-plate .lp-mark {
+  position: absolute; inset: 0; z-index: 0;
+  pointer-events: none;
+}
+.leaf-plate .lp-mark svg { width: 100%; height: 100%; display: block; }
+.leaf-plate .lp-foot { position: relative; z-index: 1; }
+.leaf-plate .lp-title {
+  font-family: "Instrument Sans", sans-serif;
+  font-weight: 500; letter-spacing: -0.03em; line-height: 1.02;
+  font-size: var(--lp-size, 30px);
+  max-width: 92%;
+  overflow-wrap: anywhere;
+}
+.leaf-plate .lp-sub { font-size: 11.5px; opacity: 0.6; margin-top: 6px; }
+.leaf-plate.is-note .lp-title { font-weight: 400; letter-spacing: -0.02em; }
+
 /* A card with a thumbnail on the left + text on the right (like the JKane work cards) */
 .card-row {
   display: flex;
@@ -2190,7 +2247,7 @@ a.cvp-proj:hover { background: #f0ecec; }
     { id: 'refs',      label: 'design references',   children: ['Ten Principles for Good Design', 'Design’s Role in Sustainable Consumption', 'Design Ah! / デザインあ', 'Page Flows', 'Visual Complexity', 'GSAP', 'Mobbin'] },
     { id: 'influence', label: 'influences',          children: ['Ryuichi Sakamoto', 'Dieter Rams', 'Ross Lovegrove', 'Y2K', 'Senseware', 'Totemic design', 'Brian Jungen', 'Steve Jobs'] },
     { id: 'obsess',    label: 'weird obsessions',    children: ['チョロバイ', 'Toques', 'Behavioral systems', 'Invisible intelligence', 'Cultural semiotics', 'Informational mapping'] },
-    { id: 'artifacts', label: 'internet artifacts',  children: ['Getty', 'Scripting Harmony', 'Radio Garden', 'PingMag', 'My 80’s TV', 'ArtKit'] },
+    { id: 'artifacts', label: 'internet artifacts',  children: ['Getty', 'Sculpting Harmony', 'Radio Garden', 'PingMag', 'My 80’s TV', 'ArtKit'] },
     { id: 'notes',     label: 'notes',               children: ['chicken, beef, fish, meat, vegetables, fruits, nuts… coffee, tea', 'love is trust', 'there is no spoon', 'no untouchable forces', 'you’re in a perfect dance w/…'] },
   ];
 
@@ -2858,7 +2915,7 @@ a.cvp-proj:hover { background: #f0ecec; }
     },
     artifacts: {
       'Getty': { href: 'https://www.getty.edu/' },
-      'Scripting Harmony': { href: 'https://gehry.getty.edu/' },
+      'Sculpting Harmony': { href: 'https://gehry.getty.edu/' },
       'Radio Garden': { href: 'https://radio.garden/search' },
       'PingMag': { href: 'https://web.archive.org/web/20080306091751/http://www.pingmag.jp/' },
       'My 80\u2019s TV': { href: 'https://80s.myretrotvs.com/#' },
@@ -2872,10 +2929,188 @@ a.cvp-proj:hover { background: #f0ecec; }
     },
   };
 
+  // =============================================================
+  // LEAF CONTENT — what each child node says when clicked.
+  //   m    : meta line (author · year, type, etc.)
+  //   b    : body copy (array = paragraphs)
+  //   href : link (falls back to ITEM_META href); link = button text
+  //   img  : optional real image path — replaces the generated plate.
+  //          e.g. img: 'images/nodes/toques.jpg'
+  // =============================================================
+  const LEAF = {
+    practice: {
+      'all work': { m: 'Index', b: `Every piece of work that is currently public, in one chronological feed. Client projects, experiments and futuresupersonic work sit side by side, because it is one continuous practice rather than separate tracks.`, href: 'practice.html#all', link: 'open the index' },
+      'public work': { m: 'Client and studio work', b: `Projects that can be shown publicly: retail, hospitality, identity and packaging work, from Future Command through to studio roles in Tokyo.`, href: 'practice.html#work', link: 'see public work' },
+      'experiments': { m: 'Self-initiated', b: `Prototypes and speculative systems I make without a brief. The Moving Bench and KEIF / Prototype 41 both started here, as small questions about how objects and interfaces could respond to people.`, href: 'practice.html#experiments', link: 'see experiments' },
+      'previous identities': { m: 'Future Command Design Office', b: [`Before this site there was Future Command, my own studio. It worked mostly with hotels, shops and makers across Hiroshima and the Chūgoku region.`, `That includes the Kissa Shima lemon cake packaging on Miyajima, which received an Honourable Mention at Hiroshima ADC 2018 and is still in use.`] },
+    },
+    fss: {
+      'independent creative practice': { m: 'futuresupersonic', b: `futuresupersonic is the name I make things under when there is no client. It covers objects, apparel, writing and prototypes, and it is where most of my long-term research lives.`, href: 'futuresupersonic.html', link: 'visit futuresupersonic' },
+      'SUZURI': { m: 'Apparel · print on demand', b: `futuresupersonic tees and small objects, printed on demand through SUZURI in Japan. Nothing sits in a warehouse. Each piece is made when someone orders it.`, img: 'images/fss-tees-1.jpg', link: 'open SUZURI' },
+      'publications': { m: 'Essays · Substack', b: `Essays and printed matter. The most recent asks what comes after letting AI write our words: whether we should also let it rearrange our thoughts.`, href: 'https://substack.com/@futuresupersonic', link: 'read on Substack' },
+      'objects': { m: 'In development', b: `Physical things that carry an idea. Right now that means functional, 3D-printed objects for the home, starting with lighting and small furniture.` },
+      'future projects': { m: 'In development', b: `Concepts that are not finished yet. The main thread is KEIF / Prototype 41, a touchless spatial interface driven by hand and body tracking, and the question of what comes after it.` },
+    },
+    designer: {
+      'systems thinking': { m: 'Approach', b: `I look at the whole system before the single touchpoint: who is involved, what moves between them and where it breaks. The habit comes from the Rotman–OCAD DesignWorks practicum and from years of mapping journeys before designing any screen.` },
+      'behavioral design': { m: 'Approach', b: `Designing for what people actually do, not what they say they do. The Moving Bench began with one question: what if a bench could sense how someone felt, and respond?`, href: 'moving-bench.html', link: 'read the Moving Bench study' },
+      'concept design': { m: 'Approach', b: `Turning a loose ambition into a direction a team can build. Usually that means a reverse brief, a few distinct directions and the language and references that let everyone see the same thing.`, href: 'tfg-onomichi-retailfront.html', link: 'see TFG Onomichi' },
+      'industrial design': { m: 'Background · OCAD, Humber', b: `Where I started: industrial design at OCAD and automotive design at Humber. For a Bell Canada mobile technology competition I designed a touchscreen phone concept that looked a lot like the original iPhone, about four years before it launched.` },
+      'experience strategy': { m: 'Approach', b: `Deciding what an experience should feel like before anyone designs it. Most of this work has been in hospitality: guest journeys, service moments and design language for hotels across Japan.` },
+    },
+    books: {
+      'The Tipping Point': { m: 'Malcolm Gladwell · 2000', b: `How small things spread into big ones: ideas, products and behaviours that suddenly tip. It gave me early language for why some designs catch on and others never do.` },
+      'Outliers': { m: 'Malcolm Gladwell · 2008', b: `Success as a product of timing, culture and thousands of hours of practice rather than talent alone. A reminder that context shapes people as much as people shape things.` },
+      'The Death and Life of Great American Cities': { m: 'Jane Jacobs · 1961', b: `Jacobs argued that cities work when they are dense, mixed and full of eyes on the street. It shaped how I approached wayfinding and environments: design for the life of a place, not only its plan.` },
+      'Cradle to Cradle': { m: 'William McDonough & Michael Braungart · 2002', b: `Design waste out from the start, so materials cycle back as nutrients instead of ending as rubbish. The book is printed on a synthetic, recyclable material, so it makes its own argument.` },
+      'The Internet of Things': { m: 'Book', b: `Objects that sense, connect and act on their own. It frames the territory my own prototypes work in: interfaces that respond to presence instead of waiting for a tap.` },
+      'Logo Modernism': { m: 'Jens Müller, R. Roger Remington · Taschen, 2015', b: `Around 6,000 trademarks from 1940 to 1980, organised by form rather than by designer or date. It is a reference I open when I need to remember how much a simple mark can carry.` },
+    },
+    films: {
+      'Akira': { m: 'Katsuhiro Otomo · 1988', b: `Neo-Tokyo, 2019: a city rebuilt on top of its own disaster. Still one of the most complete visions of a future city ever drawn.` },
+      'Boyz n the Hood': { m: 'John Singleton · 1991', b: `A story about how a neighbourhood shapes the choices available to the young people growing up in it. Place as a force, not a backdrop.` },
+      'Ready Player One': { m: 'Steven Spielberg · 2018', b: `A future where most of life happens inside a shared virtual world. Worth watching as a sketch of where spatial interfaces could go, the good and the bad.` },
+      'Rams': { m: 'Gary Hustwit · 2018', b: `A documentary portrait of Dieter Rams, with music by Brian Eno. A slow, quiet film about restraint, and about what designers owe the world they add things to.` },
+      'Ghost in the Shell': { m: 'Mamoru Oshii · 1995', b: `Bodies, networks and identity in a near-future Asian city. It asked questions about humans and machines decades before they felt urgent.` },
+      'Design & Thinking': { m: 'Mu-Ming Tsai · 2012', b: `A documentary on design thinking and how it moved out of studios into business, education and social change.`, link: 'watch the trailer' },
+      'Blade Runner': { m: 'Ridley Scott · 1982', b: `Los Angeles, 2019. The signage, light, rain and layered languages changed how designers imagine cities, and it still holds up.` },
+      'The Matrix': { m: 'The Wachowskis · 1999', b: `Reality as an interface. It also gave me one of my notes: there is no spoon.` },
+      'Alphaville': { m: 'Jean-Luc Godard · 1965', b: `A city run by a computer that has outlawed poetry and emotion, filmed in ordinary 1960s Paris with no futuristic sets. Proof that the future is mostly framing.` },
+      'Objectified': { m: 'Gary Hustwit · 2009', b: `A documentary about industrial design and the everyday objects around us, with Dieter Rams, Jonathan Ive and many others talking about why things look the way they do.` },
+    },
+    refs: {
+      'Ten Principles for Good Design': { m: 'Dieter Rams', b: `Good design is innovative, useful, aesthetic, understandable, unobtrusive, honest, long-lasting, thorough, environmentally friendly, and as little design as possible. I still check work against the list.` },
+      'Design’s Role in Sustainable Consumption': { m: 'Ann Thorpe · Design Issues, 2010', b: `An essay asking whether design can stop being a cog in consumerism and take a real role in supporting sustainable consumption.`, link: 'read on JSTOR' },
+      'Design Ah! / デザインあ': { m: 'NHK Educational · since 2011', b: `An NHK programme for children that teaches design through everyday things: how they are shaped, named and used. The best design education on Japanese television.` },
+      'Page Flows': { m: 'Tool', b: `A library of recorded user flows from real apps: onboarding, checkout, settings. Useful for seeing how a product behaves over time, not only how a screen looks.`, link: 'open Page Flows' },
+      'Visual Complexity': { m: 'Manuel Lima', b: `Lima's long-running archive of network visualisations, later a book. It makes invisible systems visible, which is half of what I try to do.`, link: 'read more' },
+      'GSAP': { m: 'GreenSock · JavaScript', b: `The animation platform I reach for when motion needs to explain something. Motion as communication, not decoration.`, link: 'open GSAP' },
+      'Mobbin': { m: 'Tool', b: `A large library of screens and flows from real mobile and web apps. A quick way to see how a pattern is actually being used.`, link: 'open Mobbin' },
+    },
+    influence: {
+      'Ryuichi Sakamoto': { m: 'Composer · 1952–2023', b: `From Yellow Magic Orchestra to film scores to his late ambient work, he moved between technology and silence without losing either. He is in the listening room too.` },
+      'Dieter Rams': { m: 'Industrial designer · b. 1932', b: `Head of design at Braun for decades and the author of the ten principles. Less, but better.` },
+      'Ross Lovegrove': { m: 'Industrial designer · b. 1958', b: `A Welsh designer known for organic forms drawn from nature and new materials. He also contributed to Kenya Hara's Senseware exhibition.` },
+      'Y2K': { m: 'Aesthetic · late 1990s–early 2000s', b: `Translucent plastics, chrome, blobs and a lot of optimism about the digital future. It was the visual language of the years I started studying design.` },
+      'Senseware': { m: 'Exhibition · Kenya Hara, 2007 and 2009', b: `Kenya Hara's TOKYO FIBER exhibitions on synthetic fibres, shown in Tokyo, Milan and beyond. Hara used the word for any material that stirs the senses and makes you want to make something.` },
+      'Totemic design': { m: 'Idea', b: `Objects that hold meaning for a group: totems, mascots, marks, signs. I am interested in how a designed form becomes a symbol people gather around.` },
+      'Brian Jungen': { m: 'Artist · b. 1970', b: `A Canadian artist of Dane-zaa and Swiss descent. His Prototypes for New Understanding (1998–2005) cut apart Nike Air Jordans and rebuilt them as Northwest Coast-style masks, colliding consumer culture with Indigenous form.` },
+      'Steve Jobs': { m: 'Apple co-founder · 1955–2011', b: `Less the person than the insistence that technology should feel human, and that the parts nobody sees still matter.` },
+    },
+    obsess: {
+      'チョロバイ': { m: 'Choro Bike · Takara, 1984', b: `The motorbike version of Takara's Choro-Q toys, first released in 1984. Tiny, squashed bikes with surprisingly real detail.` },
+      'Toques': { m: 'Object', b: `Canadian for a knit winter hat. One simple object with endless variation.` },
+      'Behavioral systems': { m: 'Idea', b: `How small rules, cues and nudges add up to what people actually do in a space or a service.` },
+      'Invisible intelligence': { m: 'Idea', b: `Technology that works without announcing itself: systems that sense presence and intent before you ask. It is the thread running through KEIF.` },
+      'Cultural semiotics': { m: 'Idea', b: `How signs, colours and objects carry meaning inside a culture, and how that meaning shifts when it crosses into another.` },
+      'Informational mapping': { m: 'Idea', b: `Making complex information navigable: maps, diagrams, constellations. This site is one of them.` },
+    },
+    artifacts: {
+      'Getty': { m: 'J. Paul Getty Trust', b: `The Getty's museum, research institute and open collections, all in one place.`, link: 'visit getty.edu' },
+      'Sculpting Harmony': { m: 'Getty × Resn · 2023', b: `Getty's digital exhibition on Frank Gehry's Walt Disney Concert Hall, built from his models, sketches and archive. My favourite website ever made.`, link: 'open the exhibition' },
+      'Radio Garden': { m: 'Website', b: `Live radio stations from around the world, placed on a globe you can spin.`, link: 'open Radio Garden' },
+      'PingMag': { m: 'Tokyo design magazine · 2000s', b: `A Tokyo web magazine about design and making things, from the 2000s. The link goes to an archived copy.`, link: 'open the archive' },
+      'My 80’s TV': { m: 'MyRetroTVs · Joey Cato', b: `Channel-surf 1980s television on a virtual set, static and all.`, link: 'turn it on' },
+      'ArtKit': { m: 'Website', b: `A small corner of the internet I keep coming back to.`, link: 'open ArtKit' },
+    },
+    sns: {
+      'Dribbble': { m: '@benjaminlemar', b: `Visual work and small studies.`, link: 'open Dribbble' },
+      'LinkedIn': { m: 'benjaminlemar', b: `Work history and the best way to reach me professionally.`, link: 'open LinkedIn' },
+      'Instagram': { m: '@benjaminlemar', b: `Images, posted rarely.`, link: 'open Instagram' },
+      'X / Twitter': { m: '@benjaminlemar_', b: `Occasional thoughts.`, link: 'open X' },
+    },
+    notes: {
+      'there is no spoon': { m: 'From The Matrix, 1999' },
+    },
+  };
+
+  // ---- Generated plate visuals (used when a leaf has no img) ----
+  const PLATE = {
+    practice:  { bg: '#f6f6f6', fg: 'rgb(43,23,3)', motif: 'grid' },
+    fss:       { bg: '#eeeeee', fg: 'rgb(43,23,3)', motif: 'orbit' },
+    designer:  { bg: 'rgb(43,23,3)', fg: '#f6f6f6', motif: 'graph' },
+    books:     { bg: '#efe9dc', fg: 'rgb(43,23,3)', motif: 'pages' },
+    films:     { bg: 'rgb(43,23,3)', fg: '#f6f6f6', motif: 'frame' },
+    refs:      { bg: '#f6f6f6', fg: 'rgb(43,23,3)', motif: 'reg' },
+    influence: { bg: '#eeeeee', fg: 'rgb(43,23,3)', motif: 'rings' },
+    obsess:    { bg: '#b7ff00', fg: 'rgb(43,23,3)', motif: 'dots' },
+    artifacts: { bg: '#e4e4e4', fg: 'rgb(43,23,3)', motif: 'window' },
+    sns:       { bg: '#eeeeee', fg: 'rgb(43,23,3)', motif: 'links' },
+    notes:     { bg: '#ffffff', fg: 'rgb(43,23,3)', motif: 'none' },
+  };
+  function hash01(str, salt) {
+    let h = 2166136261 ^ (salt || 0);
+    for (let i = 0; i < str.length; i++) { h ^= str.charCodeAt(i); h = Math.imul(h, 16777619); }
+    return ((h >>> 0) % 10000) / 10000;
+  }
+  function plateMotif(kind, key) {
+    const r = n => hash01(key, n);
+    const S = 'stroke="currentColor" fill="none" stroke-width="1"';
+    let g = '';
+    if (kind === 'pages') {
+      const x0 = 196 + r(1) * 30;
+      for (let i = 0; i < 9; i++) g += `<line x1="${x0 + (i % 3) * 3}" y1="${26 + i * 6}" x2="300" y2="${26 + i * 6}" ${S} opacity="0.35"/>`;
+    } else if (kind === 'frame') {
+      const fx = 176 + r(1) * 20;
+      g += `<rect x="${fx}" y="40" width="124" height="52" ${S} opacity="0.35"/>`;
+      for (let i = 0; i < 8; i++) { g += `<rect x="${fx + 4 + i * 15.5}" y="32" width="7" height="4" rx="1" fill="currentColor" opacity="0.3"/><rect x="${fx + 4 + i * 15.5}" y="96" width="7" height="4" rx="1" fill="currentColor" opacity="0.3"/>`; }
+    } else if (kind === 'rings') {
+      const cx = 238 + r(1) * 40, cy = 64 + r(2) * 40;
+      for (let i = 1; i <= 5; i++) g += `<circle cx="${cx}" cy="${cy}" r="${i * 16}" ${S} opacity="${0.42 - i * 0.06}"/>`;
+      g += `<circle cx="${cx}" cy="${cy}" r="4" fill="#b7ff00" stroke="currentColor" stroke-width="1"/>`;
+    } else if (kind === 'dots') {
+      const hit = Math.floor(r(1) * 24);
+      for (let y = 0; y < 4; y++) for (let x = 0; x < 6; x++) {
+        const i = y * 6 + x, cx = 188 + x * 20, cy = 30 + y * 20;
+        g += i === hit ? `<circle cx="${cx}" cy="${cy}" r="6" fill="currentColor"/>` : `<circle cx="${cx}" cy="${cy}" r="1.6" fill="currentColor" opacity="0.4"/>`;
+      }
+    } else if (kind === 'reg') {
+      const cx = 250 + r(1) * 30, cy = 66 + r(2) * 26;
+      g += `<circle cx="${cx}" cy="${cy}" r="22" ${S} opacity="0.4"/><line x1="${cx - 36}" y1="${cy}" x2="${cx + 36}" y2="${cy}" ${S} opacity="0.4"/><line x1="${cx}" y1="${cy - 36}" x2="${cx}" y2="${cy + 36}" ${S} opacity="0.4"/><circle cx="${cx}" cy="${cy}" r="3" fill="#b7ff00" stroke="currentColor"/>`;
+    } else if (kind === 'window') {
+      const x = 170 + r(1) * 30, y = 30 + r(2) * 16;
+      g += `<rect x="${x}" y="${y}" width="120" height="78" rx="6" ${S} opacity="0.45"/><line x1="${x}" y1="${y + 14}" x2="${x + 120}" y2="${y + 14}" ${S} opacity="0.45"/>`;
+      for (let i = 0; i < 3; i++) g += `<circle cx="${x + 9 + i * 8}" cy="${y + 7}" r="2" fill="currentColor" opacity="0.45"/>`;
+      g += `<rect x="${x + 10}" y="${y + 24}" width="${40 + r(3) * 50}" height="6" rx="3" fill="currentColor" opacity="0.18"/><rect x="${x + 10}" y="${y + 36}" width="${30 + r(4) * 60}" height="6" rx="3" fill="currentColor" opacity="0.18"/>`;
+    } else if (kind === 'graph') {
+      const pts = [0, 1, 2, 3, 4].map(i => [190 + r(i * 2 + 1) * 110, 26 + r(i * 2 + 2) * 80]);
+      for (let i = 1; i < pts.length; i++) g += `<line x1="${pts[0][0]}" y1="${pts[0][1]}" x2="${pts[i][0]}" y2="${pts[i][1]}" ${S} opacity="0.35"/>`;
+      pts.forEach((p, i) => { g += i === 0 ? `<circle cx="${p[0]}" cy="${p[1]}" r="6" fill="#b7ff00"/>` : `<circle cx="${p[0]}" cy="${p[1]}" r="3" fill="currentColor" opacity="0.6"/>`; });
+    } else if (kind === 'orbit') {
+      const a = Math.round(r(1) * 60 - 30);
+      g += `<g transform="rotate(${a} 250 70)"><ellipse cx="250" cy="70" rx="62" ry="22" ${S} opacity="0.4"/><circle cx="312" cy="70" r="5" fill="#b7ff00" stroke="currentColor"/></g><circle cx="250" cy="70" r="10" fill="currentColor" opacity="0.85"/>`;
+    } else if (kind === 'grid') {
+      const hit = Math.floor(r(1) * 9);
+      for (let i = 0; i < 9; i++) { const x = 230 + (i % 3) * 22, y = 24 + Math.floor(i / 3) * 22; g += `<rect x="${x}" y="${y}" width="16" height="16" rx="3" ${i === hit ? 'fill="#b7ff00" stroke="currentColor"' : S + ' opacity="0.4"'}/>`; }
+    } else if (kind === 'links') {
+      g += `<circle cx="240" cy="66" r="24" ${S} opacity="0.45"/><circle cx="268" cy="66" r="24" ${S} opacity="0.45"/><circle cx="254" cy="66" r="3" fill="#b7ff00" stroke="currentColor"/>`;
+    }
+    return g ? `<svg viewBox="0 0 320 200" preserveAspectRatio="xMidYMid slice" aria-hidden="true">${g}</svg>` : '';
+  }
+  function plateFor(parentId, label) {
+    const st = PLATE[parentId] || PLATE.refs;
+    const parent = NODES.find(n => n.id === parentId);
+    const kids = (parent && parent.children) || [];
+    const idx = kids.indexOf(label);
+    const pad = n => String(n).padStart(2, '0');
+    const count = idx >= 0 ? `${pad(idx + 1)} / ${pad(kids.length)}` : '';
+    const L = label.length;
+    const isNote = parentId === 'notes';
+    const size = isNote ? (L > 40 ? 17 : L > 20 ? 21 : 26) : (L <= 10 ? 34 : L <= 18 ? 28 : L <= 30 ? 23 : 19);
+    const sub = (LEAF[parentId] && LEAF[parentId][label] && LEAF[parentId][label].m) || '';
+    return `<div class="leaf-plate${isNote ? ' is-note' : ''}" style="--pb:${st.bg};--pf:${st.fg};--lp-size:${size}px">
+      <div class="lp-mark">${plateMotif(st.motif, label)}</div>
+      <div class="lp-top"><span>${(parent && parent.label) || ''}</span><span>${count}</span></div>
+      <div class="lp-foot"><div class="lp-title">${label}</div>${sub && !isNote ? `<div class="lp-sub">${sub}</div>` : ''}</div>
+    </div>`;
+  }
+
   // One row in a list card: subtle link if a URL exists, else plain text.
   function listRow(id, label) {
     const meta = (ITEM_META[id] && ITEM_META[id][label]) || null;
-    const desc = (meta && meta.desc) ? `<span class="ref-desc">${meta.desc}</span>` : '';
+    const leafM = (LEAF[id] && LEAF[id][label] && LEAF[id][label].m) || '';
+    const descText = (meta && meta.desc) || leafM;
+    const desc = descText ? `<span class="ref-desc">${descText}</span>` : '';
     const name = (meta && meta.href)
       ? `<a class="ref-link" href="${meta.href}"${meta.go ? '' : ' target="_blank" rel="noopener"'}>${label}${meta.go ? ' →' : ''}</a>`
       : `<span class="ref-name">${label}</span>`;
@@ -3277,11 +3512,31 @@ a.cvp-proj:hover { background: #f0ecec; }
   // A single focused card for an individual leaf (child) node.
   function openLeafCard(leaf) {
     closeOverlay();
-    const blurb = childBlurb(leaf.parentId, leaf.label);
-    openSide(leaf.label, `
-      <div class="card-block">
-        <div class="ct">${leaf.label}</div>
-        <div class="cb">${blurb || 'More on this soon.'}</div>
+    const pid = leaf.parentId, label = leaf.label;
+    const data = (LEAF[pid] && LEAF[pid][label]) || {};
+    const meta = (ITEM_META[pid] && ITEM_META[pid][label]) || {};
+    const href = data.href || meta.href || '';
+    const external = /^https?:/.test(href);
+    const visual = data.img
+      ? `<img class="leaf-img" src="${data.img}" alt="${label}" loading="lazy">`
+      : plateFor(pid, label);
+    const paras = Array.isArray(data.b) ? data.b : (data.b ? [data.b] : (meta.desc ? [meta.desc] : []));
+    const isNote = pid === 'notes';
+    const body = paras.map(p => `<p>${p}</p>`).join('');
+    const link = href
+      ? `<a class="leaf-link" href="${href}"${external ? ' target="_blank" rel="noopener"' : ''}>${data.link || 'open'} ${external ? '↗' : '→'}</a>`
+      : '';
+    const inner = [
+      data.img && data.m ? `<div class="leaf-meta">${data.m}</div>` : '',
+      data.img ? `<div class="ct">${label}</div>` : '',
+      isNote && data.m ? `<div class="leaf-meta">${data.m}</div>` : '',
+      body ? `<div class="cb">${body}</div>` : '',
+      link,
+    ].join('');
+    openSide(label, `
+      <div class="card-block leaf-card${inner ? '' : ' is-bare'}">
+        ${visual}
+        ${inner ? `<div class="leaf-body">${inner}</div>` : ''}
       </div>
     `);
   }
