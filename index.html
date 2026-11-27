@@ -2954,7 +2954,7 @@ a.cvp-proj:hover { background: #f0ecec; }
     },
     fss: {
       'independent creative practice': { m: 'futuresupersonic', b: `futuresupersonic is the name I make things under when there is no client. It covers objects, apparel, writing and prototypes, and it is where most of my long-term research lives.`, href: 'futuresupersonic.html', link: 'visit futuresupersonic' },
-      'SUZURI': { m: 'Apparel · print on demand', b: `futuresupersonic tees and small objects, printed on demand through SUZURI in Japan. Nothing sits in a warehouse. Each piece is made when someone orders it.`, img: 'images/fss-tees-1.jpg', link: 'open SUZURI' },
+      'SUZURI': { m: 'Apparel · print on demand', b: `futuresupersonic tees and small objects, printed on demand through SUZURI in Japan. Nothing sits in a warehouse. Each piece is made when someone orders it.`, link: 'open SUZURI' },
       'publications': { m: 'Essays · Substack', b: `Essays and printed matter. The most recent asks what comes after letting AI write our words: whether we should also let it rearrange our thoughts.`, href: 'https://substack.com/@futuresupersonic', link: 'read on Substack' },
       'objects': { m: 'In development', b: `Physical things that carry an idea. Right now that means functional, 3D-printed objects for the home, starting with lighting and small furniture.` },
       'future projects': { m: 'In development', b: `Concepts that are not finished yet. The main thread is KEIF / Prototype 41, a touchless spatial interface driven by hand and body tracking, and the question of what comes after it.` },
@@ -3041,50 +3041,11 @@ a.cvp-proj:hover { background: #f0ecec; }
   // =============================================================
   const WC = 'https://thumb.wikimedia.org/wikipedia/commons/thumb/';
   const LEAF_IMG = {
-    // practice + futuresupersonic: own work
-    'practice:all work':            ['images/mycelium-japan-hero.jpg'],
-    'practice:public work':         ['images/tfg-onomichi-retailfront/tfg-photo-facade.jpg'],
-    'practice:experiments':         ['images/moving-bench-hero.jpg'],
-    'practice:previous identities': ['images/tsuneishi-illustrations-book.jpg'],
-    'fss:SUZURI':                   ['images/fss-tees-3.jpg'],
-    'fss:objects':                  ['images/mlc-hero.jpg'],
-    'fss:future projects':          ['images/mb-spatial.jpg'],
-    'designer:concept design':      ['images/tfg-onomichi-retailfront/tfg-moodboard.jpg'],
-    // conceptual designer
-    'designer:systems thinking':    [WC + '8/88/Shibuya_Crossing%2C_Aerial.jpg/960px-Shibuya_Crossing%2C_Aerial.jpg', 'David Kernan · CC BY 4.0', 'https://commons.wikimedia.org/wiki/File:Shibuya_Crossing,_Aerial.jpg'],
-    'designer:industrial design':   [WC + 'f/fa/Tesla_Model_S_clay.jpg/960px-Tesla_Model_S_clay.jpg', 'Steve Jurvetson · CC BY 2.0', 'https://commons.wikimedia.org/wiki/File:Tesla_Model_S_clay.jpg'],
-    'designer:experience strategy': [WC + '7/7b/Matsuoka_corridor_ac_%286%29.jpg/960px-Matsuoka_corridor_ac_%286%29.jpg', 'Asturio Cantabrio · CC BY-SA 4.0', 'https://commons.wikimedia.org/wiki/File:Matsuoka_corridor_ac_(6).jpg'],
-    // books (subject references, not covers)
-    'books:Outliers':               [WC + '5/57/Ice_hockey_stick_and_puck_20181220.jpg/960px-Ice_hockey_stick_and_puck_20181220.jpg', 'Santeri Viinamäki · CC BY-SA 4.0', 'https://commons.wikimedia.org/wiki/File:Ice_hockey_stick_and_puck_20181220.jpg'],
-    'books:Cradle to Cradle':       [WC + 'd/da/Industrial_sedum_green_roof_installed_above_the_Javits_Center.jpg/960px-Industrial_sedum_green_roof_installed_above_the_Javits_Center.jpg', 'Oleg Yunakov · CC BY-SA 4.0', 'https://commons.wikimedia.org/wiki/File:Industrial_sedum_green_roof_installed_above_the_Javits_Center.jpg'],
-    // films (places and objects from their worlds, not stills)
-    'films:Akira':                  [WC + 'd/dc/Colorful_neon_street_signs_in_Kabukich%C5%8D%2C_Shinjuku%2C_Tokyo.jpg/960px-Colorful_neon_street_signs_in_Kabukich%C5%8D%2C_Shinjuku%2C_Tokyo.jpg', 'Kabukichō, Shinjuku · Basile Morin · CC BY-SA 4.0', 'https://commons.wikimedia.org/wiki/File:Colorful_neon_street_signs_in_Kabukich%C5%8D,_Shinjuku,_Tokyo.jpg'],
-    'films:Boyz n the Hood':        [WC + '7/7f/Looking_north_on_Crenshaw_from_1100_S.jpg/960px-Looking_north_on_Crenshaw_from_1100_S.jpg', 'Crenshaw, Los Angeles · Downtowngal · CC BY-SA 4.0', 'https://commons.wikimedia.org/wiki/File:Looking_north_on_Crenshaw_from_1100_S.jpg'],
-    'films:Ready Player One':       [WC + 'e/ee/Virtual_reality_headset.jpg/960px-Virtual_reality_headset.jpg', 'FloppaIngénieur · CC BY 4.0', 'https://commons.wikimedia.org/wiki/File:Virtual_reality_headset.jpg'],
-    'films:Rams':                   [WC + '6/63/Transistor_radio%2C_model_TR-1_%28left%29%3B_model_T3_%28right%29%2C_LACMA%2C_October_2026.jpg/960px-Transistor_radio%2C_model_TR-1_%28left%29%3B_model_T3_%28right%29%2C_LACMA%2C_October_2026.jpg', 'Braun T3 (right), LACMA · Superraptor123 · CC BY-SA 4.0', 'https://commons.wikimedia.org/wiki/File:Transistor_radio,_model_TR-1_(left);_model_T3_(right),_LACMA,_October_2026.jpg'],
-    'films:Ghost in the Shell':     [WC + '5/5a/Mong_Kok_Neon_Signs_Night_%2848127904386%29.jpg/960px-Mong_Kok_Neon_Signs_Night_%2848127904386%29.jpg', 'Mong Kok, Hong Kong · Benh Lieu Song · CC BY-SA 2.0', 'https://commons.wikimedia.org/wiki/File:Mong_Kok_Neon_Signs_Night_(48127904386).jpg'],
-    'films:Blade Runner':           [WC + 'f/f0/Interior_of_the_Bradbury_Building_dllu.jpg/960px-Interior_of_the_Bradbury_Building_dllu.jpg', 'Bradbury Building, LA · Daniel L. Lu · CC BY-SA 4.0', 'https://commons.wikimedia.org/wiki/File:Interior_of_the_Bradbury_Building_dllu.jpg'],
-    'films:The Matrix':             [WC + '1/1f/Silver_Spoon_MET_LC_2005_39_s02.jpg/960px-Silver_Spoon_MET_LC_2005_39_s02.jpg', 'The Metropolitan Museum of Art · CC0', 'https://commons.wikimedia.org/wiki/File:Silver_Spoon_MET_LC_2005_39_s02.jpg'],
-    'films:Alphaville':             [WC + '3/37/GD-FR-Paris-Maison_de_la_Radio.jpg/960px-GD-FR-Paris-Maison_de_la_Radio.jpg', 'Maison de la Radio, Paris · CC BY-SA 2.5', 'https://commons.wikimedia.org/wiki/File:GD-FR-Paris-Maison_de_la_Radio.jpg'],
-    'films:Objectified':            [WC + 'e/ed/WE500dialphone.jpg/960px-WE500dialphone.jpg', 'Western Electric 500 · public domain', 'https://commons.wikimedia.org/wiki/File:WE500dialphone.jpg'],
-    // design references
-    'refs:Visual Complexity':       [WC + 'd/d2/Internet_map_1024.jpg/960px-Internet_map_1024.jpg', 'The Opte Project · CC BY 2.5', 'https://commons.wikimedia.org/wiki/File:Internet_map_1024.jpg'],
-    'refs:GSAP':                    ['https://gsap.com/GSAP-share-image.png', 'Image: gsap.com'],
-    'refs:Mobbin':                  ['https://mobbin.com/mobbin-marketing-pages/images/og/mobbin.png', 'Image: mobbin.com'],
-    // influences (their work, not portraits)
-    'influence:Ross Lovegrove':     [WC + 'f/f4/Lasvit_Pavillon_by_Ross_Lovegrove_%282012%29.jpg/960px-Lasvit_Pavillon_by_Ross_Lovegrove_%282012%29.jpg', 'Lasvit pavilion, 2012 · tongeron91 · CC BY-SA 2.0', 'https://commons.wikimedia.org/wiki/File:Lasvit_Pavillon_by_Ross_Lovegrove_(2012).jpg'],
-    // weird obsessions
-    'obsess:Toques':                [WC + '6/61/Tuque.jpg/960px-Tuque.jpg', 'Rathernotto · CC BY-SA 4.0', 'https://commons.wikimedia.org/wiki/File:Tuque.jpg'],
-    'obsess:Behavioral systems':    [WC + 'a/a6/Urinal_Fly.JPG/960px-Urinal_Fly.JPG', 'The urinal fly nudge · Gustav Broennimann · CC BY 3.0', 'https://commons.wikimedia.org/wiki/File:Urinal_Fly.JPG'],
-    'obsess:Invisible intelligence': [WC + '7/70/Motion_sensor_light.jpg/960px-Motion_sensor_light.jpg', 'Santeri Viinamäki · CC BY-SA 4.0', 'https://commons.wikimedia.org/wiki/File:Motion_sensor_light.jpg'],
-    'obsess:Cultural semiotics':    [WC + 'd/d3/Examples_of_Japanese_road_signs_indicating_a_%22melody_road%22.png/960px-Examples_of_Japanese_road_signs_indicating_a_%22melody_road%22.png', 'Japanese melody road signs · CC0', 'https://commons.wikimedia.org/wiki/File:Examples_of_Japanese_road_signs_indicating_a_%22melody_road%22.png'],
-    'obsess:Informational mapping': [WC + '2/29/Minard.png/960px-Minard.png', 'Charles Minard, 1869 · public domain', 'https://commons.wikimedia.org/wiki/File:Minard.png'],
-    // internet artifacts (each site's own share image)
-    'artifacts:Sculpting Harmony':  ['https://gehry.getty.edu/storyblok/cache/assets/getty-share-11647009.png', 'Image: gehry.getty.edu'],
-    'artifacts:Radio Garden':       ['https://radio.garden/public/icons/rg-facebook-1.jpg', 'Image: radio.garden'],
-    'artifacts:PingMag':            ['https://web.archive.org/web/20080306091751im_/http://pingmag.jp/pingmag-en/wp-content/themes/pingmag2/images/pingmakelogo_small.gif', 'Image: PingMag via the Internet Archive, 2008', 'https://web.archive.org/web/20080306091751/http://www.pingmag.jp/', 'contain'],
-    'artifacts:My 80’s TV':    ['https://www.myretrotvs.com/share-logo-v3.png', 'Image: myretrotvs.com'],
+    // Empty for now: every node shows its generated plate.
+    // Add a line here to give a node a real image, e.g.
+    // 'books:Outliers': ['images/nodes/outliers.jpg', 'Credit · licence', 'https://source'],
   };
+
   function leafImg(pid, label) {
     const row = LEAF_IMG[pid + ':' + label];
     const data = (LEAF[pid] && LEAF[pid][label]) || {};
