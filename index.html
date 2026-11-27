@@ -465,7 +465,7 @@ button { font: inherit; color: inherit; background: none; border: none; cursor: 
   transform:
     translate(-50%, -50%)
     rotateY(var(--cy, 0deg)) rotateX(var(--cx, 0deg))
-    scale(var(--child-scale, 1));
+    scale(calc(var(--child-scale, 1) * var(--child-size, 1)));
   opacity: calc(var(--depth-opacity, 1) * var(--child-op, 1));
   transition:
     transform 420ms var(--ease-gooey),
@@ -478,7 +478,7 @@ button { font: inherit; color: inherit; background: none; border: none; cursor: 
   transform:
     translate(-50%, -50%)
     rotateY(var(--cy, 0deg)) rotateX(var(--cx, 0deg))
-    scale(calc(var(--child-scale, 1) * 1.08));
+    scale(calc(var(--child-scale, 1) * var(--child-size, 1) * 1.08));
 }
 
 /* HUD — drag hint at bottom */
@@ -2181,6 +2181,7 @@ a.cvp-proj:hover { background: #f0ecec; }
     { id: 'designer',  label: 'conceptual designer', children: ['systems thinking', 'behavioral design', 'concept design', 'industrial design', 'experience strategy'] },
     { id: 'cv',        label: 'cv / resume',         children: ['experience', 'selected work', 'education', 'tools'] },
     // Personal / playful / standalone
+    { id: 'kanji',     label: 'kanji map',           href: '/kanji-map/' },
     { id: 'listen',    label: 'listen',              artifact: 'ipod' },
     { id: 'invaders',  label: 'space invaders',      artifact: 'invaders' },
     { id: 'sns',       label: 'social',              children: ['Dribbble', 'LinkedIn', 'Instagram', 'X / Twitter'] },
@@ -2528,6 +2529,10 @@ a.cvp-proj:hover { background: #f0ecec; }
       rxTarget = Math.max(-80, Math.min(80, targetRx));
     }
 
+    if (node.href) {
+      window.location.href = node.href;
+      return;
+    }
     if (node.artifact === 'ipod') {
       pills.forEach(pp => pp.el.classList.remove('is-active'));
       el.classList.add('is-active');
@@ -2602,6 +2607,8 @@ a.cvp-proj:hover { background: #f0ecec; }
         const el = document.createElement('div');
         el.className = 'pill is-child';
         el.innerHTML = '<div class="face">' + label + '</div>';
+        const sizeMeta = ITEM_META[parentNode.id] && ITEM_META[parentNode.id][label];
+        if (sizeMeta && sizeMeta.size) el.style.setProperty('--child-size', sizeMeta.size);
         el.style.setProperty('--x', bx + 'px');
         el.style.setProperty('--y', by + 'px');
         el.style.setProperty('--z', bz + 'px');
@@ -2830,7 +2837,7 @@ a.cvp-proj:hover { background: #f0ecec; }
     },
     fss: {
       'independent creative practice': { desc: 'Self-directed creative work under the futuresupersonic name.' },
-      'kanji map':     { desc: 'A free learning tool for every JLPT kanji, N5 to N1 — component mind maps, graded reading, reviews and mock exams.', href: '/kanji-map/', go: true },
+      'kanji map':     { desc: 'A free learning tool for every JLPT kanji, N5 to N1 — component mind maps, graded reading, reviews and mock exams.', href: '/kanji-map/', go: true, size: 0.5 },
       'SUZURI':        { desc: 'Print-on-demand objects and apparel.', href: 'https://suzuri.jp' },
       'publications':  { desc: 'Zines, printed matter, and editorial work.' },
       'objects':       { desc: 'Physical things that carry ideas.' },
